@@ -1,5 +1,8 @@
 package agent.adversary;
 
+import java.util.Arrays;
+import java.util.List;
+
 import agent.selector.AbsSel;
 import utilityFunc.*;
 
@@ -9,24 +12,52 @@ public class BinarySearch extends AbsAdv {
 	protected double mUpperPrediction;
 	protected double mAccuracy;
 	
+	// karan added to keep track of what was offered
+	protected int mMostRecentOffer;
+	protected int mInteractionCount;
+	
+	public int getMostRecentOffer(){
+		return mMostRecentOffer;
+	}
+	
+	public int getInteractionCount(){
+		return mInteractionCount;
+	}
+	
+	public List<Double> getModelEstimate(){
+		return Arrays.asList(mLowerPrediction, mUpperPrediction, mAccuracy);
+	}
+	
+	public void setModelEstimate(List<Double> modelEstimate){
+		mLowerPrediction = modelEstimate.get(0);
+		mUpperPrediction = modelEstimate.get(1);
+		mAccuracy = modelEstimate.get(2);
+	}
+	
 	public BinarySearch(double newUpperPrediction, double newAccuracy, AbsUtF newFunction) {
 		super(newFunction);
 		mUpperPrediction = newUpperPrediction;
 		mAccuracy = newAccuracy;
 		mLowerPrediction = 0;
+		
+		mMostRecentOffer = -1;
+		mInteractionCount = 0;
 	}
 	
 	public int whichFeature(AbsSel target) {
 		return mFeatures.get((int)(Math.random()*mFeatures.size()));
 	}
 	
-	public void giveOffer(AbsSel target) {
+	public boolean giveOffer(AbsSel target) {
+		//count an interaction
+		mInteractionCount++;
+		
 		if(mFeatures.size() > 0) {
 			if(mVerbose) System.out.println("Adv feature count: " + mFeatures.size());
 			
 			updatePrediction();
 			int offer = whichFeature(target);
-			
+			mMostRecentOffer = offer;
 			
 			if(mVerbose) System.out.println("Adv predicition: " + mCurPrediction);
 			
@@ -34,6 +65,7 @@ public class BinarySearch extends AbsAdv {
 			if(cost < 0) {
 				//cost = 0;
 				mFeatures.remove((Integer)offer);
+				return false;
 			}
 			else {
 				boolean accepted = target.takeOffer(cost, offer);
@@ -43,12 +75,14 @@ public class BinarySearch extends AbsAdv {
 				else {
 					processDecline(cost, offer);
 				}
+				return accepted;
 			}
 		}
 		else { 
 			if(mVerbose) System.out.println("Adv cannot make another offer");
 		}
 		if(mVerbose) System.out.println("-------------");
+		return false;
 	}
 	
 	public void updatePrediction() {

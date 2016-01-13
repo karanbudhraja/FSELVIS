@@ -1,6 +1,7 @@
 package agent.adversary;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import agent.AbsAgent;
 import agent.selector.*;
@@ -14,7 +15,7 @@ public abstract class AbsAdv extends AbsAgent{
 		mSellHistory = new ArrayList<Integer>();
 	}
 	
-	public abstract void giveOffer(AbsSel target);
+	public abstract boolean giveOffer(AbsSel target);
 
 	public void processAccept(double cost, int index) {
 		if(mVerbose) System.out.println("Cost was: " + cost);
@@ -26,4 +27,11 @@ public abstract class AbsAdv extends AbsAgent{
 	public void processDecline(double cost, int index) {
 		//do nothing
 	}
+	
+	// karan adding a method to get last feature offered
+	public abstract int getMostRecentOffer();
+	public abstract int getInteractionCount();
+	public abstract List<Double> getModelEstimate();
+	public abstract void setModelEstimate(List<Double> modelEstimate);
+
 }
