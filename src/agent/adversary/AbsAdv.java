@@ -22,4 +22,8 @@ public abstract class AbsAdv extends AbsAgent{
 		mFeatures.remove((Integer)index);
 		mSellHistory.add((Integer)index);
 	}
+	
+	public void processDecline(double cost, int index) {
+		//do nothing
+	}
 }

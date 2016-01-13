@@ -77,7 +77,10 @@ public class NDimen extends AbsUtF {
 			}
 		}
 		//System.out.println(featureSet.toString() + " --> " + utility);
-		return utility;
+		if(utility > 0)
+			return utility;
+		else
+			return 0;
 	}
 	
 	public ArrayList<HashSet<Integer>> generatePowerSet(ArrayList<Integer> featureSet, int size) {

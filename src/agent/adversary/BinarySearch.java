@@ -5,6 +5,7 @@ import utilityFunc.*;
 
 public class BinarySearch extends AbsAdv {
 	protected double mLowerPrediction;
+	protected double mCurPrediction;
 	protected double mUpperPrediction;
 	protected double mAccuracy;
 	
@@ -15,36 +16,32 @@ public class BinarySearch extends AbsAdv {
 		mLowerPrediction = 0;
 	}
 	
+	public int whichFeature(AbsSel target) {
+		return mFeatures.get((int)(Math.random()*mFeatures.size()));
+	}
+	
 	public void giveOffer(AbsSel target) {
 		if(mFeatures.size() > 0) {
 			if(mVerbose) System.out.println("Adv feature count: " + mFeatures.size());
-			int offer = mFeatures.get((int)(Math.random()*mFeatures.size()));
 			
-			double curPrediction;
-			if(mAccuracy*mUpperPrediction < mLowerPrediction) {
-				curPrediction = mUpperPrediction;
-			}
-			else {
-				curPrediction = (mUpperPrediction + mLowerPrediction) / 2;
-			}
+			updatePrediction();
+			int offer = whichFeature(target);
 			
 			
-			if(mVerbose) System.out.println("Adv predicition: " + curPrediction);
+			if(mVerbose) System.out.println("Adv predicition: " + mCurPrediction);
 			
-			double cost = mUtF.getUtilityIncrease(offer, mSellHistory)/curPrediction;
+			double cost = mUtF.getUtilityIncrease(offer, mSellHistory)/mCurPrediction;
 			if(cost < 0) {
+				//cost = 0;
 				mFeatures.remove((Integer)offer);
 			}
 			else {
 				boolean accepted = target.takeOffer(cost, offer);
 				if(accepted) {
 					processAccept(cost, offer);
-					if(mUpperPrediction > curPrediction) {
-						mUpperPrediction = curPrediction;
-					}
 				}
 				else {
-					mLowerPrediction = curPrediction;
+					processDecline(cost, offer);
 				}
 			}
 		}
@@ -52,6 +49,29 @@ public class BinarySearch extends AbsAdv {
 			if(mVerbose) System.out.println("Adv cannot make another offer");
 		}
 		if(mVerbose) System.out.println("-------------");
+	}
+	
+	public void updatePrediction() {
+		if(mAccuracy*mUpperPrediction < mLowerPrediction) {
+			mCurPrediction = mUpperPrediction;
+		}
+		else {
+			mCurPrediction = (mUpperPrediction + mLowerPrediction) / 2;
+		}
+	}
+	
+	public void processAccept(double cost, int index) {
+		super.processAccept(cost, index);
+		if(mUpperPrediction > mCurPrediction) {
+			mUpperPrediction = mCurPrediction;
+		}
+		updatePrediction();
+	}
+	
+	public void processDecline(double cost, int index) {
+		super.processDecline(cost, index);
+		mLowerPrediction = mCurPrediction;
+		updatePrediction();
 	}
 
 }
