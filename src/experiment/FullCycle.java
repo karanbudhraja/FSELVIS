@@ -207,24 +207,7 @@ public class FullCycle {
 							break;
 						}
 					}
-
-					//if we didn't reach the limit on witnesses, add more candidates randomly as potential witnesses
-					if(witnesses.size() < k_s){
-						Collections.shuffle(adversaryIndices);
-
-						for(int adversaryIndex : adversaryIndices){
-							//only add if not already in collection
-							if(witnesses.contains(adversaryIndex) == false){
-								witnesses.add(adversaryIndex);
-							}
-
-							//exit loop if witness limit reached
-							if(witnesses.size() == k_s){
-								break;
-							}
-						}
-					}
-					
+			
 					//now use witness information to condition adversary model of selectors
 					for(int k = 0; k < selectorList.size(); k++){
 						double lowerPredictionEstimate = 0;
