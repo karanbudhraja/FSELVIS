@@ -107,7 +107,7 @@ public class CompareSellersIndividually {
 
 			/* set up sellers */
 			int numBuyers = 2;
-			//karan: each seller maintains individual binary search instances for individual sellers
+			//each seller maintains individual binary search instances for individual sellers
 			//a seller is then represented as an array of binary search objects
 			ArrayList<ArrayList<AbsAdv>> adversaryList = new ArrayList<ArrayList<AbsAdv>>();
 			
@@ -127,7 +127,7 @@ public class CompareSellersIndividually {
 			
 			/* set up buyers */
 			//make selector
-			//karan: we now maintain a list of buyers, which do not model the sellers
+			//we now maintain a list of buyers, which do not model the sellers
 			//if we wish to model the sellers, then one buyer can be represented as multiple buyers
 			//in a manner similar to seller implementation
 			ArrayList<AbsSel> selectorList = new ArrayList<AbsSel>();
@@ -276,7 +276,7 @@ public class CompareSellersIndividually {
 			System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
 			System.out.println("---------------"); 
 	*/		
-			//karan: using default values for now
+			//using default values for now
 			advSum += adversary1.get(0).getUtility() + adversary1.get(0).evaluateUtility() - adversary1.get(0).getCost(); 
 			//selSum += selector1.getUtility() + selector1.evaluateUtility() - selector1.getCost();
 		}
