@@ -20,10 +20,9 @@ public class LearningTest {
 	private static double	DISCOUNT		= 0.5;
 	private static double	START_GUESS		= 75.001;
 	private static double	ACCURACY		= 0.95;
-
 	
-	private static String IN_PATH = "/users/denizen/Desktop/AfsResults/input/letter";
-	private static String	OUT_PATH	= "/users/denizen/Desktop/AfsResults/learningTest.txt";
+	private static String IN_PATH = "./input/letter_dataset/";
+	private static String	OUT_PATH	= "./learningTest.txt";
 	
 	private static Writer myWriter;
 	private static int counter;
@@ -68,14 +67,16 @@ public class LearningTest {
 				BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);
 		
 		for(int j = 0; j < numGames; j++) {
+			//AbsAdv adversary = new BinarySearch(startGuess, accuracy, utilityFunction);
+			((LearningWithBinarySearch)adversary).resetForLearning(startGuess);
+			
 			adversary.setVerbose(IS_VERBOSE);
 			if(IS_VERBOSE) System.out.println("Game #" + (j+1));
-			((LearningWithBinarySearch)adversary).resetForLearning(startGuess);
+						
 			for(int i = 1; i <= numFeat; i++) {					//TODO: Changed i=0; i< to i=1; i<= ; Should work properly (need to double-check)
 				adversary.addFeature(i);
 			}
 			
-
 			//make selector
 			AbsSel selector = new UtilityThreshold(threshold, utilityFunction);
 			selector.setVerbose(IS_VERBOSE);
