@@ -91,9 +91,9 @@ public class LearningTest {
 			//System.out.println("---------------"); 
 			//((LearningWithBinarySearch)adversary).dumpPolicy();
 
-			advSum += adversary.getUtility()/* + adversary.evaluateUtility() - adversary.getCost()*/; 
-			selSum += selector.getUtility() + selector.evaluateUtility() - selector.getCost();
-		}
+			advSum = adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost(); 
+			selSum = selector.getUtility() + selector.evaluateUtility() - selector.getCost();
+		
 		myWriter.toBuffer(
 				numRounds + ", " +
 				threshold + ", " + 
@@ -101,8 +101,9 @@ public class LearningTest {
 				discount + ", " + 
 				startGuess + ", " + 
 				accuracy + ", " + 
-				(advSum/(double)numGames) + ", " + 
-				(selSum/(double)numGames) + "\r\n");
+				(advSum) + ", " + 
+				(selSum) + "\r\n");
+		}
 	}
 
 }
