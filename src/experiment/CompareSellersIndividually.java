@@ -89,19 +89,24 @@ public class CompareSellersIndividually {
 			adversary1.add(adversaryEntity);
 		}
 		adversaryList.add(adversary1);
-
-		ArrayList<AbsAdv> adversary2 = new ArrayList<AbsAdv>();
-		for(int id=0; id<numBuyers; id++){
-			//AbsAdv adversaryEntity = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 
-			//		BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);			
-			AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
-			adversaryEntity.setVerbose(IS_VERBOSE);
-			adversary2.add(adversaryEntity);
-		}
-		adversaryList.add(adversary2);
-		
+	 			
 		for(int j = 0; j < numGames; j++) {
 
+			//remove everything from adversaryList if the entry is type BS
+			//add a new entry for BS
+			//manual deletion for now, at index 1
+			if(adversaryList.size() > 1){
+				adversaryList.remove(1);
+			}
+			
+			ArrayList<AbsAdv> adversary2 = new ArrayList<AbsAdv>();
+			for(int id=0; id<numBuyers; id++){
+				AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
+				adversaryEntity.setVerbose(IS_VERBOSE);
+				adversary2.add(adversaryEntity);
+			}
+			adversaryList.add(adversary2);
+						
 			/* set up buyers */
 			//make selector
 			//we now maintain a list of buyers, which do not model the sellers
@@ -121,9 +126,6 @@ public class CompareSellersIndividually {
 				for(AbsAdv adversaryEntity : adversaryEntities){
 					if(adversaryEntity.getClass().equals(LearningWithBinarySearch.class)){
 						((LearningWithBinarySearch)adversaryEntity).resetForLearning(startGuess);
-					}
-					else{
-						((BinarySearch)adversaryEntity).reset(startGuess, accuracy);
 					}
 					
 					adversaryEntity.setVerbose(IS_VERBOSE);
