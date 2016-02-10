@@ -76,7 +76,7 @@ public class CompareSellersIndividually {
 		NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
 		
 		/* set up sellers */
-		int numBuyers = 2;
+		int numBuyers = 1;
 		//each seller maintains individual binary search instances for individual sellers
 		//a seller is then represented as an array of binary search objects
 		ArrayList<ArrayList<AbsAdv>> adversaryList = new ArrayList<ArrayList<AbsAdv>>();
@@ -89,7 +89,16 @@ public class CompareSellersIndividually {
 			adversary1.add(adversaryEntity);
 		}
 		adversaryList.add(adversary1);
-		
+
+		ArrayList<AbsAdv> adversary2 = new ArrayList<AbsAdv>();
+		for(int id=0; id<numBuyers; id++){
+			//AbsAdv adversaryEntity = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 
+			//		BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);			
+			AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
+			adversaryEntity.setVerbose(IS_VERBOSE);
+			adversary2.add(adversaryEntity);
+		}
+		adversaryList.add(adversary2);
 		
 		for(int j = 0; j < numGames; j++) {
 
@@ -110,7 +119,12 @@ public class CompareSellersIndividually {
 			// reset adversaries
 			for(ArrayList<AbsAdv> adversaryEntities : adversaryList){
 				for(AbsAdv adversaryEntity : adversaryEntities){
-					((LearningWithBinarySearch)adversaryEntity).resetForLearning(startGuess);
+					if(adversaryEntity.getClass().equals(LearningWithBinarySearch.class)){
+						((LearningWithBinarySearch)adversaryEntity).resetForLearning(startGuess);
+					}
+					else{
+						((BinarySearch)adversaryEntity).reset(startGuess, accuracy);
+					}
 					
 					adversaryEntity.setVerbose(IS_VERBOSE);
 					if(IS_VERBOSE) System.out.println("Game #" + (j+1));
@@ -245,6 +259,7 @@ public class CompareSellersIndividually {
 
 			//output total utility 
 			AbsAdv adversary = (adversaryList.get(0)).get(0);
+			//System.out.println("\n" + adversary.getUtility() + " " + adversary.evaluateUtility() + " " + adversary.getCost());			
 			System.out.println("Adversary: utility=" + (adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost()));
 			//System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
 			//System.out.println("---------------"); 
