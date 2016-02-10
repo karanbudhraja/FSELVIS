@@ -13,40 +13,28 @@ import agent.adversary.*;
 import agent.selector.*;
 
 public class CompareSellersIndividually {
+
 	private static double	BASE_Q			= 3;
 	private static double	EPSILON			= 0.0;
 	private static double	LEARNING_RATE	= 1;
 	private static double	DISCOUNT_FACTOR	= 1;
-
+	
 	private static boolean	IS_VERBOSE		= false;
-	private static int		NUM_GAMES		= 100;
+	private static int		NUM_GAMES		= 2000;
+	//optimal: 2->1->3
+	private static int	 	NUM_ROUNDS		= 30;
+	private static double 	THRESHOLD 		= 50;
+	private static int		NUM_FEAT		= 8; 
+	private static double	DISCOUNT		= 0.5;
+	private static double	START_GUESS		= 75.001;
+	private static double	ACCURACY		= 0.95;
 	
-	private static double 	NUM_ROUNDS_L	= 10;
-	private static double 	NUM_ROUNDS_H	= 50;
-	
-	private static double 	THRESHOLD_L 	= 0.5;
-	private static double 	THRESHOLD_H 	= 2.0;
-	
-	private static double	NUM_FEAT_L		= 8; 					//should be 10
-	private static double	NUM_FEAT_H		= 17; 			
-	
-	private static double	AVG_UTILITY_L	= 0.5;
-	private static double	AVG_UTILITY_H	= 2.0;
-	
-	private static double	START_GUESS_L	= 2.001;
-	private static double	START_GUESS_H	= 4.001;
-	
-	private static double	ACCURACY_L		= 0.5;
-	private static double	ACCURACY_H		= 0.99;
-	
-	private static int 		INCREMENTS		= 5;
-	
-	private static String IN_PATH = ".";
-	private static String	OUT_PATH	= "./fullCycle.txt";
+	private static String IN_PATH = "./input/letter_dataset/";
+	private static String	OUT_PATH	= "./learningTest.txt";
 	
 	private static Writer myWriter;
 	private static int counter;
-	
+
 	private static double sigmoid(double x)
 	{
 	    return 1 / (1 + Math.exp(-x));
@@ -55,76 +43,56 @@ public class CompareSellersIndividually {
 	public static void main(String[] args) {
 		counter = 0;
 		
-		System.out.println("Running FullCycle");
+		System.out.println("Running LearningTest");
 		myWriter = new Writer(OUT_PATH);
 		myWriter.toBuffer("numRounds, threshold, numFeat, avgUtility, startGuess, accuracy, advUtility, selUtility\r\n");
 		myWriter.write();
 		
-		double d = 0; //commented out avg_utility change since it is not being modified
-		
-		for(int a = 0; a < INCREMENTS; a++)
-			for(int b = 0; b < INCREMENTS; b++)
-				for(int c = 0; c < INCREMENTS; c++)
-					//for(int d = 0; d < INCREMENTS; d++)
-						for(int e = 0; e < INCREMENTS; e++)
-							for(int f = 0; f < INCREMENTS; f++)
-								runExperiment(NUM_GAMES, 
-										(int)(	a*(NUM_ROUNDS_H		-NUM_ROUNDS_L)	/INCREMENTS 	+ NUM_ROUNDS_L),
-												b*(THRESHOLD_H			-THRESHOLD_L) 		/INCREMENTS	+ THRESHOLD_L, 
-										(int)(	c*(NUM_FEAT_H			-NUM_FEAT_L) 			/INCREMENTS	+ NUM_FEAT_L),
-												d*(AVG_UTILITY_H		-AVG_UTILITY_L) 		/INCREMENTS	+ AVG_UTILITY_L,
-												e*(START_GUESS_H		-START_GUESS_L) 	/INCREMENTS	+ START_GUESS_L,
-												f*(ACCURACY_H				-ACCURACY_L) 			/INCREMENTS	+ ACCURACY_L
-										);
-		
+		runExperiment(NUM_GAMES, NUM_ROUNDS, THRESHOLD, NUM_FEAT, DISCOUNT, START_GUESS, ACCURACY);
 		
 		System.out.println("Begin write");
 		myWriter.write();
 		System.out.println("Done!");
 	}
-	
+
 	public static void runExperiment(int numGames, int numRounds, 
-			double threshold, int numFeat, double avgUtility, double startGuess, double accuracy) {
-		/*System.out.println(
+			double threshold, int numFeat, double discount, double startGuess, double accuracy) {
+		System.out.println(
 				numRounds + ", " +
 				threshold + ", " + 
 				numFeat + ", " + 
-				avgUtility + ", " + 
+				discount + ", " + 
 				startGuess + ", " + 
-				accuracy);*/
+				accuracy);
 		System.out.println(++counter);
 				
 		double advSum = 0;
 		double selSum = 0;
+		
+		//make utility function
+		Constant discountFunction = new Constant(discount);
+		//Linear discountFunction = new Linear(-0.05, 1);
+		
+		NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
+		
+		/* set up sellers */
+		int numBuyers = 1;
+		//each seller maintains individual binary search instances for individual sellers
+		//a seller is then represented as an array of binary search objects
+		ArrayList<ArrayList<AbsAdv>> adversaryList = new ArrayList<ArrayList<AbsAdv>>();
+		
+		ArrayList<AbsAdv> adversary1 = new ArrayList<AbsAdv>();
+		for(int id=0; id<numBuyers; id++){
+			AbsAdv adversaryEntity = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 
+					BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);			
+			adversaryEntity.setVerbose(IS_VERBOSE);
+			adversary1.add(adversaryEntity);
+		}
+		adversaryList.add(adversary1);
+		
+		
 		for(int j = 0; j < numGames; j++) {
-			//make utility function
-			//Constant discountFunction = new Constant(0.5);
-			Linear discountFunction = new Linear(-0.05, 1);
-			Naive1D utilityFunction = new Naive1D(discountFunction);
-			for(int i = 0; i < numFeat; i++) {
-				utilityFunction.addFeature(i, Math.random()*2.0*avgUtility);
-			}
 
-			/* set up sellers */
-			int numBuyers = 2;
-			//each seller maintains individual binary search instances for individual sellers
-			//a seller is then represented as an array of binary search objects
-			ArrayList<ArrayList<AbsAdv>> adversaryList = new ArrayList<ArrayList<AbsAdv>>();
-			
-			ArrayList<AbsAdv> adversary1 = new ArrayList<AbsAdv>();
-			for(int id=0; id<numBuyers; id++){
-				//AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
-				AbsAdv adversaryEntity = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 
-						BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);
-				
-				adversaryEntity.setVerbose(IS_VERBOSE);
-				for(int i = 0; i < numFeat; i++) {
-					adversaryEntity.addFeature(i);
-				}
-				adversary1.add(adversaryEntity);
-			}
-			adversaryList.add(adversary1);
-			
 			/* set up buyers */
 			//make selector
 			//we now maintain a list of buyers, which do not model the sellers
@@ -137,13 +105,24 @@ public class CompareSellersIndividually {
 				selector.setVerbose(IS_VERBOSE);
 				selectorList.add(selector);
 			}			
+
+			// each adversary is a list of adversaries maintaining buyer information
+			// reset adversaries
+			for(ArrayList<AbsAdv> adversaryEntities : adversaryList){
+				for(AbsAdv adversaryEntity : adversaryEntities){
+					((LearningWithBinarySearch)adversaryEntity).resetForLearning(startGuess);
+					
+					adversaryEntity.setVerbose(IS_VERBOSE);
+					if(IS_VERBOSE) System.out.println("Game #" + (j+1));
+								
+					for(int i = 1; i <= numFeat; i++) {					//TODO: Changed i=0; i< to i=1; i<= ; Should work properly (need to double-check)
+						adversaryEntity.addFeature(i);
+					}
+				}
+			}
 			
-/********** main loop ********************************************************************************************************/
-			
-			/* set up game */
 			//run random number of rounds
 			for(int i = 0; i < numRounds; i++) {
-				
 				// each adversary is a list of adversaries maintaining buyer information
 				for(ArrayList<AbsAdv> adversary : adversaryList){					
 					
@@ -224,20 +203,23 @@ public class CompareSellersIndividually {
 							}
 						}
 						
-						//compute average estimate
-						lowerPredictionEstimate /= contributingWitnessCount;
-						upperPredictionEstimate /= contributingWitnessCount;
-						accuracyEstimate /= contributingWitnessCount;
-						
-						//account for adversary's own model
-						lowerPredictionEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(0) + alpha_s*lowerPredictionEstimate;
-						upperPredictionEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(1) + alpha_s*upperPredictionEstimate;
-						accuracyEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(2) + alpha_s*accuracyEstimate;
-
-						//use these estimates to generate cost
-						//these changes are currently permanent to the adversary
-						//they may later be made temporary per round
-						adversary.get(k).setModelEstimate(Arrays.asList(lowerPredictionEstimate, upperPredictionEstimate, accuracyEstimate));
+						if(contributingWitnessCount > 0){
+							//compute average estimate
+							lowerPredictionEstimate /= contributingWitnessCount;
+							upperPredictionEstimate /= contributingWitnessCount;
+							accuracyEstimate /= contributingWitnessCount;
+							
+							//account for adversary's own model
+							lowerPredictionEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(0) + alpha_s*lowerPredictionEstimate;
+							upperPredictionEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(1) + alpha_s*upperPredictionEstimate;
+							accuracyEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(2) + alpha_s*accuracyEstimate;
+	
+							//use these estimates to generate cost
+							//these changes are currently permanent to the adversary
+							//they may later be made temporary per round
+							
+							adversary.get(k).setModelEstimate(Arrays.asList(lowerPredictionEstimate, upperPredictionEstimate, accuracyEstimate));
+						}
 					}
 					/* end of information gathering */
 					
@@ -269,26 +251,25 @@ public class CompareSellersIndividually {
 				}				
 			}
 
-/*****************************************************************************************************************************/
-
 			//output total utility 
-	/*		System.out.println("Adversary: utility=" + (adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost()));
-			System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
-			System.out.println("---------------"); 
-	*/		
-			//using default values for now
-			advSum += adversary1.get(0).getUtility() + adversary1.get(0).evaluateUtility() - adversary1.get(0).getCost(); 
-			//selSum += selector1.getUtility() + selector1.evaluateUtility() - selector1.getCost();
-		}
+			AbsAdv adversary = (adversaryList.get(0)).get(0);
+			System.out.println("Adversary: utility=" + (adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost()));
+			//System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
+			//System.out.println("---------------"); 
+			//((LearningWithBinarySearch)adversary).dumpPolicy();
+
+			advSum = adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost(); 
+			//selSum = selector.getUtility() + selector.evaluateUtility() - selector.getCost();
+		
 		myWriter.toBuffer(
 				numRounds + ", " +
 				threshold + ", " + 
 				numFeat + ", " + 
-				avgUtility + ", " + 
+				discount + ", " + 
 				startGuess + ", " + 
 				accuracy + ", " + 
-				(advSum/(double)numGames) + ", " + 
-				(selSum/(double)numGames) + "\r\n");
+				(advSum) + ", " + 
+				(selSum) + "\r\n");
+		}
 	}
-
 }
