@@ -28,7 +28,7 @@ public class NDimen extends AbsUtF {
 	public void readInFeatures(String path) {
 		for(int i = 1; i <= mDepth; i++) {
 			try {
-				FileReader tempReader = new FileReader(path + i + ".txt");
+				FileReader tempReader = new FileReader(path + "letter" + i + ".txt");
 				BufferedReader reader = new BufferedReader(tempReader);
 				
 				String line = reader.readLine();
