@@ -52,6 +52,6 @@ public abstract class AbsAgent {
 	}
 	
 	public double evaluateUtility() {
-		return mUtF.getUtility(mFeatures);
+		return (mUtF.getUtility(mFeatures))/100.00;
 	}
 }
