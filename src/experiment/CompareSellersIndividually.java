@@ -76,7 +76,7 @@ public class CompareSellersIndividually {
 		NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
 		
 		/* set up sellers */
-		int numBuyers = 1;
+		int numBuyers = 2;
 		//each seller maintains individual binary search instances for individual sellers
 		//a seller is then represented as an array of binary search objects
 		ArrayList<ArrayList<AbsAdv>> adversaryList = new ArrayList<ArrayList<AbsAdv>>();
@@ -216,8 +216,7 @@ public class CompareSellersIndividually {
 	
 							//use these estimates to generate cost
 							//these changes are currently permanent to the adversary
-							//they may later be made temporary per round
-							
+							//they may later be made temporary per round							
 							adversary.get(k).setModelEstimate(Arrays.asList(lowerPredictionEstimate, upperPredictionEstimate, accuracyEstimate));
 						}
 					}
@@ -237,13 +236,6 @@ public class CompareSellersIndividually {
 						boolean accepted = adversary.get(selectorIndex).giveOffer(selectorList.get(selectorIndex));
 						
 						if(accepted == true){
-							//remove the feature across all other objects corresponding to adversary
-							for(int index = 0; index < adversary.size(); index++){
-								if(index != selectorIndex){
-									adversary.get(index).processAccept(0, adversary.get(selectorIndex).getMostRecentOffer());
-								}
-							}
-							
 							// seller's turn is over if item sold
 							break;
 						}
