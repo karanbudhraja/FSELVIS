@@ -43,15 +43,6 @@ public class BinarySearch extends AbsAdv {
 		mMostRecentOffer = -1;
 		mInteractionCount = 0;
 	}
-
-	public void reset(double newUpperPrediction, double newAccuracy) {
-		mUpperPrediction = newUpperPrediction;
-		mAccuracy = newAccuracy;
-		mLowerPrediction = 0;
-		
-		mMostRecentOffer = -1;
-		mInteractionCount = 0;
-	}
 	
 	public int whichFeature(AbsSel target) {
 		return mFeatures.get((int)(Math.random()*mFeatures.size()));
