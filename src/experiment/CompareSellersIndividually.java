@@ -81,32 +81,45 @@ public class CompareSellersIndividually {
 		//a seller is then represented as an array of binary search objects
 		ArrayList<ArrayList<AbsAdv>> adversaryList = new ArrayList<ArrayList<AbsAdv>>();
 		
-		ArrayList<AbsAdv> adversary1 = new ArrayList<AbsAdv>();
-		for(int id=0; id<numBuyers; id++){
-			AbsAdv adversaryEntity = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 
-					BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);			
-			adversaryEntity.setVerbose(IS_VERBOSE);
-			adversary1.add(adversaryEntity);
+		int numLWBSAdversaries = 0;
+		
+		for(int k = 0; k < numLWBSAdversaries; k++) {
+			ArrayList<AbsAdv> lwbsAdversary = new ArrayList<AbsAdv>();
+			for(int id=0; id<numBuyers; id++){
+				AbsAdv adversaryEntity = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 
+						BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);			
+				adversaryEntity.setVerbose(IS_VERBOSE);
+				lwbsAdversary.add(adversaryEntity);
+			}
+			adversaryList.add(lwbsAdversary);
 		}
-		adversaryList.add(adversary1);
-	 			
+		
 		for(int j = 0; j < numGames; j++) {
 
 			//remove everything from adversaryList if the entry is type BS
 			//add a new entry for BS
-			//manual deletion for now, at index 1
-			if(adversaryList.size() > 1){
-				adversaryList.remove(1);
+			//copying to a new object for now
+			ArrayList<ArrayList<AbsAdv>> newAdversaryList = new ArrayList<ArrayList<AbsAdv>>();
+			for(ArrayList<AbsAdv> adversaryEntities : adversaryList){
+				if(adversaryEntities.get(0).getClass().equals(LearningWithBinarySearch.class)){
+					newAdversaryList.add(adversaryEntities);
+				}
 			}
+			adversaryList.clear();
+			adversaryList = newAdversaryList;
 			
-			ArrayList<AbsAdv> adversary2 = new ArrayList<AbsAdv>();
-			for(int id=0; id<numBuyers; id++){
-				AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
-				adversaryEntity.setVerbose(IS_VERBOSE);
-				adversary2.add(adversaryEntity);
+			int numBSAdversaries = 2;
+
+			for(int k = 0; k < numBSAdversaries; k++) {
+				ArrayList<AbsAdv> bsAdversary = new ArrayList<AbsAdv>();
+				for(int id=0; id<numBuyers; id++){
+					AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
+					adversaryEntity.setVerbose(IS_VERBOSE);
+					bsAdversary.add(adversaryEntity);
+				}
+				adversaryList.add(bsAdversary);
 			}
-			adversaryList.add(adversary2);
-						
+				
 			/* set up buyers */
 			//make selector
 			//we now maintain a list of buyers, which do not model the sellers
