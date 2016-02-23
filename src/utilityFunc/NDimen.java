@@ -12,9 +12,11 @@ import utilityFunc.discountFunc.AbsDiF;
 public class NDimen extends AbsUtF {
 	protected ArrayList<HashMap<HashSet<Integer>, Double>> mAdjustTables;
 	protected int mDepth;
+	protected HashMap<String, Double> mMemoizationTable;
 	
 	public NDimen(AbsDiF newDiscountFunction, String path, int depth) {
 		super(newDiscountFunction);
+		mMemoizationTable = new HashMap<String, Double>();
 		mDepth = depth;
 		mAdjustTables = new ArrayList<HashMap<HashSet<Integer>, Double>>();
 		for(int i = 0; i < depth; i++) {
@@ -68,19 +70,24 @@ public class NDimen extends AbsUtF {
 	}
 
 	public double getUtility(ArrayList<Integer> featureSet) {
-		double utility = 0;
-
-		ArrayList<HashSet<Integer>> temp = generatePowerSet(featureSet, mDepth);
-		for(int j = 0; j < temp.size(); j++) {
-			if(mAdjustTables.get(temp.get(j).size() - 1).containsKey(temp.get(j))) {
-				utility += mAdjustTables.get(temp.get(j).size() - 1).get(temp.get(j));
+		String key = featureSet.toString();
+		if(!mMemoizationTable.containsKey(key)) {
+			double utility = 0;
+			ArrayList<HashSet<Integer>> temp = generatePowerSet(featureSet, mDepth);
+			for(int j = 0; j < temp.size(); j++) {
+				if(mAdjustTables.get(temp.get(j).size() - 1).containsKey(temp.get(j))) {
+					utility += mAdjustTables.get(temp.get(j).size() - 1).get(temp.get(j));
+				}
 			}
+			if(utility > 0)
+				mMemoizationTable.put(key, utility);
+			else
+				mMemoizationTable.put(key, 0d);
 		}
 		//System.out.println(featureSet.toString() + " --> " + utility);
-		if(utility > 0)
-			return utility;
-		else
-			return 0;
+		
+		return mMemoizationTable.get(key);
+		
 	}
 	
 	public ArrayList<HashSet<Integer>> generatePowerSet(ArrayList<Integer> featureSet, int size) {

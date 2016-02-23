@@ -14,13 +14,13 @@ import agent.selector.*;
 
 public class CompareSellersIndividually {
 
-	private static double	BASE_Q			= 3;
+	private static double	BASE_Q			= 5;
 	private static double	EPSILON			= 0.0;
-	private static double	LEARNING_RATE	= 1;
-	private static double	DISCOUNT_FACTOR	= 1;
+	private static double	LEARNING_RATE	= 0.5;
+	private static double	DISCOUNT_FACTOR	= 0.99;
 	
 	private static boolean	IS_VERBOSE		= false;
-	private static int		NUM_GAMES		= 2000;
+	private static int		NUM_GAMES		= 2000; 
 	//optimal: 2->1->3
 	private static int	 	NUM_ROUNDS		= 30;
 	private static double 	THRESHOLD 		= 50;
@@ -73,7 +73,11 @@ public class CompareSellersIndividually {
 		Constant discountFunction = new Constant(discount);
 		//Linear discountFunction = new Linear(-0.05, 1);
 		
-		NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
+		//NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
+		Naive1D utilityFunction = new Naive1D(discountFunction);
+		for(int i = 1; i <= NUM_FEAT; i++) {
+			utilityFunction.addFeature(i, Math.random()*25);
+		}
 		
 		/* set up sellers */
 		int numBuyers = 1;
