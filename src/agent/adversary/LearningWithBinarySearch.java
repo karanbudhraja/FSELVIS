@@ -111,7 +111,7 @@ public class LearningWithBinarySearch extends BinarySearch {
 			nextOptimal = mPolicy.get(newStateActionString);
 		}
 		//TODO: remove commented sections below
-		double newQ = /*mPolicy.get(oldStateActionString) +*/ mLearningRate*(reward + 
+		double newQ = (1-mLearningRate)*mPolicy.get(oldStateActionString) + mLearningRate*(reward + 
 				(mDiscountFactor*nextOptimal) /*- mPolicy.get(oldStateActionString)*/);
 		/*System.out.println("Old = " + mPolicy.get(oldStateActionString) + 
 				" for " + oldStateActionString + " ; New = " + newQ + " for " 
