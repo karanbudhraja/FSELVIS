@@ -73,11 +73,11 @@ public class CompareSellersIndividually {
 		Constant discountFunction = new Constant(discount);
 		//Linear discountFunction = new Linear(-0.05, 1);
 		
-		//NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
-		Naive1D utilityFunction = new Naive1D(discountFunction);
-		for(int i = 1; i <= NUM_FEAT; i++) {
-			utilityFunction.addFeature(i, Math.random()*25);
-		}
+		NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
+		//Naive1D utilityFunction = new Naive1D(discountFunction);
+		//for(int i = 1; i <= NUM_FEAT; i++) {
+		//	utilityFunction.addFeature(i, Math.random()*25);
+		//}
 		
 		/* set up sellers */
 		int numBuyers = 1;
@@ -85,7 +85,7 @@ public class CompareSellersIndividually {
 		//a seller is then represented as an array of binary search objects
 		ArrayList<ArrayList<AbsAdv>> adversaryList = new ArrayList<ArrayList<AbsAdv>>();
 		
-		int numLWBSAdversaries = 0;
+		int numLWBSAdversaries = 1;
 		
 		for(int k = 0; k < numLWBSAdversaries; k++) {
 			ArrayList<AbsAdv> lwbsAdversary = new ArrayList<AbsAdv>();
@@ -112,7 +112,7 @@ public class CompareSellersIndividually {
 			adversaryList.clear();
 			adversaryList = newAdversaryList;
 			
-			int numBSAdversaries = 2;
+			int numBSAdversaries = 0;
 
 			for(int k = 0; k < numBSAdversaries; k++) {
 				ArrayList<AbsAdv> bsAdversary = new ArrayList<AbsAdv>();
