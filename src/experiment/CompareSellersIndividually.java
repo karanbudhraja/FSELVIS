@@ -14,15 +14,15 @@ import agent.selector.*;
 
 public class CompareSellersIndividually {
 
-	private static double	BASE_Q			= 1000;
+	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
-	private static double	LEARNING_RATE	= 0.5;
+	private static double	LEARNING_RATE	= 0.9;
 	private static double	DISCOUNT_FACTOR	= 0.99;
 	
 	private static boolean	IS_VERBOSE		= false;
-	private static int		NUM_GAMES		= 20000; 
+	private static int		NUM_GAMES		= 3000; 
 	//optimal: 2->1->3
-	private static int	 	NUM_ROUNDS		= 10;
+	private static int	 	NUM_ROUNDS		= 100;
 	private static double 	THRESHOLD 		= 50;
 	private static int		NUM_FEAT		= 8; 
 	private static double	DISCOUNT		= 0.5;
@@ -80,7 +80,7 @@ public class CompareSellersIndividually {
 		//}
 		
 		/* set up sellers */
-		int numBuyers = 1;
+		int numBuyers = 2;
 		//each seller maintains individual binary search instances for individual sellers
 		//a seller is then represented as an array of binary search objects
 		ArrayList<ArrayList<AbsAdv>> adversaryList = new ArrayList<ArrayList<AbsAdv>>();
@@ -260,7 +260,9 @@ public class CompareSellersIndividually {
 					for(int k = 0; k < selectorList.size(); k++){
 						selectorIndices.add(k);
 					}
+					/*Comment out line below to prevent randomization of order*/
 					Collections.shuffle(selectorIndices);
+					/*Comment out line above to prevent randomization of order*/
 					
 					// iterate through selectors
 					for(int selectorIndex : selectorIndices){
