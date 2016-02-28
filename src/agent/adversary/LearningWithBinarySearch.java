@@ -120,6 +120,7 @@ public class LearningWithBinarySearch extends BinarySearch {
 			System.out.println("Ah!");
 		if(newStateActionString.equals("SASO:2"))
 			System.out.println("Gah!");*/
+		System.out.println("--> " + newQ);
 		mPolicy.put(oldStateActionString, (Double)newQ);
 	}
 }

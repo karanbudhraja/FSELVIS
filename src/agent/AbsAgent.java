@@ -50,8 +50,8 @@ public abstract class AbsAgent {
 	public void setVerbose(boolean toSet) {
 		mVerbose = toSet;
 	}
-	
+	/*
 	public double evaluateUtility() {
 		return (mUtF.getUtility(mFeatures))/100.00;
-	}
+	}*/
 }

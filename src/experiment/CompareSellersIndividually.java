@@ -14,15 +14,15 @@ import agent.selector.*;
 
 public class CompareSellersIndividually {
 
-	private static double	BASE_Q			= 5;
+	private static double	BASE_Q			= 1000;
 	private static double	EPSILON			= 0.0;
 	private static double	LEARNING_RATE	= 0.5;
 	private static double	DISCOUNT_FACTOR	= 0.99;
 	
 	private static boolean	IS_VERBOSE		= false;
-	private static int		NUM_GAMES		= 2000; 
+	private static int		NUM_GAMES		= 20000; 
 	//optimal: 2->1->3
-	private static int	 	NUM_ROUNDS		= 30;
+	private static int	 	NUM_ROUNDS		= 10;
 	private static double 	THRESHOLD 		= 50;
 	private static int		NUM_FEAT		= 8; 
 	private static double	DISCOUNT		= 0.5;
@@ -279,12 +279,12 @@ public class CompareSellersIndividually {
 			//output total utility 
 			AbsAdv adversary = (adversaryList.get(0)).get(0);
 			//System.out.println("\n" + adversary.getUtility() + " " + adversary.evaluateUtility() + " " + adversary.getCost());			
-			System.out.println("Adversary: utility=" + (adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost()));
+			System.out.println("Adversary: utility=" + (adversary.getUtility()/* + adversary.evaluateUtility() - adversary.getCost()*/));
 			//System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
 			//System.out.println("---------------"); 
 			//((LearningWithBinarySearch)adversary).dumpPolicy();
 
-			advSum = adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost(); 
+			advSum = adversary.getUtility();// + adversary.evaluateUtility() - adversary.getCost(); 
 			//selSum = selector.getUtility() + selector.evaluateUtility() - selector.getCost();
 		
 		myWriter.toBuffer(
