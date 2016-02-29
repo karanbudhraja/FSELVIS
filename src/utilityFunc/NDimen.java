@@ -84,7 +84,6 @@ public class NDimen extends AbsUtF {
 			else
 				mMemoizationTable.put(key, 0d);
 		}
-		//System.out.println(featureSet.toString() + " --> " + utility);
 		
 		return mMemoizationTable.get(key);
 		

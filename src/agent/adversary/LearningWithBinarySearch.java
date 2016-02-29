@@ -66,8 +66,7 @@ public class LearningWithBinarySearch extends BinarySearch {
 	}
 	
 	public String makeStateActionString(String stateString, int feature) {
-		return stateString + "O:" + feature;// + "/P:" + (int)mCurPrediction;
-		//TODO: Remove cast to int; done only for debugging readability
+		return stateString + "O:" + feature;
 	}
 	
 	public String makeStateString() {
@@ -75,9 +74,9 @@ public class LearningWithBinarySearch extends BinarySearch {
 		Integer index = 1;
 		while(mFeatures.contains(index) || mSellHistory.contains(index)) {
 			if(mFeatures.contains(index))
-				stateString += "A";//index + ":A/";
+				stateString += "A";
 			else
-				stateString += "S";//index + ":S/";
+				stateString += "S";
 			index++;
 		}
 		return stateString;
@@ -90,10 +89,7 @@ public class LearningWithBinarySearch extends BinarySearch {
 	}
 	
 	public void processDecline(double cost, int index) {
-		//String stateActionString = makeStateActionString(makeStateString(), index);
 		super.processDecline(cost, index);
-		//TODO: Possibly process even if declined
-		//processLearning(cost, stateActionString);
 	}
 	
 	public void processLearning(double cost, String oldStateActionString) {
@@ -110,17 +106,20 @@ public class LearningWithBinarySearch extends BinarySearch {
 			newStateActionString = makeStateActionString(makeStateString(), getOptimal());
 			nextOptimal = mPolicy.get(newStateActionString);
 		}
-		//TODO: remove commented sections below
+		
 		double newQ = (1-mLearningRate)*mPolicy.get(oldStateActionString) + mLearningRate*(reward + 
-				(mDiscountFactor*nextOptimal) /*- mPolicy.get(oldStateActionString)*/);
-		/*System.out.println("Old = " + mPolicy.get(oldStateActionString) + 
-				" for " + oldStateActionString + " ; New = " + newQ + " for " 
-				+ newStateActionString);
-		if(oldStateActionString.length() != 6)
-			System.out.println("Ah!");
-		if(newStateActionString.equals("SASO:2"))
-			System.out.println("Gah!");*/
-		System.out.println("--> " + newQ);
+				(mDiscountFactor*nextOptimal));
+		if(mVerbose && newQ > mBaseQ) {
+			System.out.println(   "Newly created q-value of: " + newQ + 
+								"\nexceeds base q-value of:  " + mBaseQ + 
+					"\nSomething is horribly wrong!");
+			try {
+				Thread.sleep(3000);
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		mPolicy.put(oldStateActionString, (Double)newQ);
 	}
 }

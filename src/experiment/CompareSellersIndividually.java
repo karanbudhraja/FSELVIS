@@ -14,21 +14,27 @@ import agent.selector.*;
 
 public class CompareSellersIndividually {
 
+	private static boolean	IS_VERBOSE		= false;
+	private static boolean	IS_OVERWRITE	= true;
+	//experiment settings
+	private static int		NUM_BUYERS				= 2;
+	private static int		NUM_LEARN_SELLERS 		= 1; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
+	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
+	//q-learning parameters
 	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
 	private static double	LEARNING_RATE	= 0.9;
 	private static double	DISCOUNT_FACTOR	= 0.99;
-	
-	private static boolean	IS_VERBOSE		= false;
+	//game settings
 	private static int		NUM_GAMES		= 3000; 
-	//optimal: 2->1->3
 	private static int	 	NUM_ROUNDS		= 100;
 	private static double 	THRESHOLD 		= 50;
 	private static int		NUM_FEAT		= 8; 
 	private static double	DISCOUNT		= 0.5;
 	private static double	START_GUESS		= 75.001;
 	private static double	ACCURACY		= 0.95;
-	
+	//io paths
 	private static String IN_PATH = "./input/letter_dataset/";
 	private static String	OUT_PATH	= "./learningTest.txt";
 	
@@ -44,7 +50,7 @@ public class CompareSellersIndividually {
 		counter = 0;
 		
 		System.out.println("Running LearningTest");
-		myWriter = new Writer(OUT_PATH);
+		myWriter = new Writer(OUT_PATH, IS_OVERWRITE);
 		myWriter.toBuffer("numRounds, threshold, numFeat, avgUtility, startGuess, accuracy, advUtility, selUtility\r\n");
 		myWriter.write();
 		
@@ -74,22 +80,15 @@ public class CompareSellersIndividually {
 		//Linear discountFunction = new Linear(-0.05, 1);
 		
 		NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
-		//Naive1D utilityFunction = new Naive1D(discountFunction);
-		//for(int i = 1; i <= NUM_FEAT; i++) {
-		//	utilityFunction.addFeature(i, Math.random()*25);
-		//}
 		
 		/* set up sellers */
-		int numBuyers = 2;
 		//each seller maintains individual binary search instances for individual sellers
 		//a seller is then represented as an array of binary search objects
 		ArrayList<ArrayList<AbsAdv>> adversaryList = new ArrayList<ArrayList<AbsAdv>>();
 		
-		int numLWBSAdversaries = 1;
-		
-		for(int k = 0; k < numLWBSAdversaries; k++) {
+		for(int k = 0; k < NUM_LEARN_SELLERS; k++) {
 			ArrayList<AbsAdv> lwbsAdversary = new ArrayList<AbsAdv>();
-			for(int id=0; id<numBuyers; id++){
+			for(int id=0; id<NUM_BUYERS; id++){
 				AbsAdv adversaryEntity = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 
 						BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);			
 				adversaryEntity.setVerbose(IS_VERBOSE);
@@ -111,12 +110,10 @@ public class CompareSellersIndividually {
 			}
 			adversaryList.clear();
 			adversaryList = newAdversaryList;
-			
-			int numBSAdversaries = 0;
 
-			for(int k = 0; k < numBSAdversaries; k++) {
+			for(int k = 0; k < NUM_BASIC_SELLERS; k++) {
 				ArrayList<AbsAdv> bsAdversary = new ArrayList<AbsAdv>();
-				for(int id=0; id<numBuyers; id++){
+				for(int id=0; id<NUM_BUYERS; id++){
 					AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
 					adversaryEntity.setVerbose(IS_VERBOSE);
 					bsAdversary.add(adversaryEntity);
@@ -131,7 +128,7 @@ public class CompareSellersIndividually {
 			//in a manner similar to seller implementation
 			ArrayList<AbsSel> selectorList = new ArrayList<AbsSel>();
 			
-			for(int id=0; id<numBuyers; id++){
+			for(int id=0; id<NUM_BUYERS; id++){
 				AbsSel selector = new UtilityThreshold(threshold, utilityFunction);
 				selector.setVerbose(IS_VERBOSE);
 				selectorList.add(selector);
@@ -148,7 +145,7 @@ public class CompareSellersIndividually {
 					adversaryEntity.setVerbose(IS_VERBOSE);
 					if(IS_VERBOSE) System.out.println("Game #" + (j+1));
 								
-					for(int i = 1; i <= numFeat; i++) {					//TODO: Changed i=0; i< to i=1; i<= ; Should work properly (need to double-check)
+					for(int i = 1; i <= numFeat; i++) {
 						adversaryEntity.addFeature(i);
 					}
 				}
@@ -260,9 +257,7 @@ public class CompareSellersIndividually {
 					for(int k = 0; k < selectorList.size(); k++){
 						selectorIndices.add(k);
 					}
-					/*Comment out line below to prevent randomization of order*/
 					Collections.shuffle(selectorIndices);
-					/*Comment out line above to prevent randomization of order*/
 					
 					// iterate through selectors
 					for(int selectorIndex : selectorIndices){
@@ -270,7 +265,7 @@ public class CompareSellersIndividually {
 						// try to sell to that buyer
 						boolean accepted = adversary.get(selectorIndex).giveOffer(selectorList.get(selectorIndex));
 						
-						if(accepted == true){
+						if(accepted == true && IS_ONE_SALE_PER_ROUND){
 							// seller's turn is over if item sold
 							break;
 						}
@@ -286,8 +281,8 @@ public class CompareSellersIndividually {
 			//System.out.println("---------------"); 
 			//((LearningWithBinarySearch)adversary).dumpPolicy();
 
-			advSum = adversary.getUtility();// + adversary.evaluateUtility() - adversary.getCost(); 
-			//selSum = selector.getUtility() + selector.evaluateUtility() - selector.getCost();
+			advSum = adversary.getUtility(); 
+			//selSum = selector.getUtility() - selector.getCost();
 		
 		myWriter.toBuffer(
 				numRounds + ", " +

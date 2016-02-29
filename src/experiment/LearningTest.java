@@ -13,7 +13,7 @@ public class LearningTest {
 	
 	private static boolean	IS_VERBOSE		= false;
 	private static int		NUM_GAMES		= 2000;
-	//optimal: 2->1->3
+
 	private static int	 	NUM_ROUNDS		= 30;
 	private static double 	THRESHOLD 		= 50;
 	private static int		NUM_FEAT		= 8; 
@@ -87,13 +87,13 @@ public class LearningTest {
 			}
 
 			//output total utility 
-			System.out.println("Adversary: utility=" + (adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost()));
+			System.out.println("Adversary: utility=" + (adversary.getUtility()));
 			//System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
 			//System.out.println("---------------"); 
 			//((LearningWithBinarySearch)adversary).dumpPolicy();
 
-			advSum = adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost(); 
-			selSum = selector.getUtility() + selector.evaluateUtility() - selector.getCost();
+			advSum = adversary.getUtility(); 
+			selSum = selector.getUtility() - selector.getCost();
 		
 		myWriter.toBuffer(
 				numRounds + ", " +

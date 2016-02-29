@@ -281,8 +281,8 @@ public class FullCycle {
 			System.out.println("---------------"); 
 	*/		
 			//using default values for now
-			advSum += adversary1.get(0).getUtility() + adversary1.get(0).evaluateUtility() - adversary1.get(0).getCost(); 
-			selSum += selector1.getUtility() + selector1.evaluateUtility() - selector1.getCost();
+			advSum += adversary1.get(0).getUtility(); 
+			selSum += selector1.getUtility() - selector1.getCost();
 		}
 		myWriter.toBuffer(
 				numRounds + ", " +

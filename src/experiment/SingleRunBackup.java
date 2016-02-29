@@ -57,8 +57,8 @@ public class SingleRunBackup {
 			System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
 			System.out.println("---------------"); 
 	*/		
-			advSum += adversary.getUtility() + adversary.evaluateUtility() - adversary.getCost(); 
-			selSum += selector.getUtility() + selector.evaluateUtility() - selector.getCost();
+			advSum += adversary.getUtility(); 
+			selSum += selector.getUtility()- selector.getCost();
 		}
 		myWriter.toBuffer((advSum/(double)NUM_GAMES) + ", " + (selSum/(double)NUM_GAMES) + "\r\n");
 		myWriter.write();

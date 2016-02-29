@@ -11,8 +11,6 @@ public class BinarySearch extends AbsAdv {
 	protected double mCurPrediction;
 	protected double mUpperPrediction;
 	protected double mAccuracy;
-	
-	// karan added to keep track of what was offered
 	protected int mMostRecentOffer;
 	protected int mInteractionCount;
 	
