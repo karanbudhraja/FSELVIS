@@ -3,6 +3,7 @@ package experiment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,10 +18,16 @@ public class CompareSellersIndividually {
 	private static boolean	IS_VERBOSE		= false;
 	private static boolean	IS_OVERWRITE	= true;
 	//experiment settings
-	private static int		NUM_BUYERS				= 2;
-	private static int		NUM_LEARN_SELLERS 		= 1; //LearningWithBinarySearch
+	private static int		NUM_BUYERS				= 1;
+	private static int		NUM_LEARN_SELLERS 		= 2; //LearningWithBinarySearch
 	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
+	private static boolean	IS_INFORMATION_SHARED 	= false; // easier access to this setting
+	//java does not support type conversion so we need this for speed
+	private static HashMap<Boolean, Integer> boolToInt = new HashMap<Boolean, Integer>() {{
+	    put(true, 1);
+	    put(false, 0);
+	}};
 	//q-learning parameters
 	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
@@ -238,6 +245,10 @@ public class CompareSellersIndividually {
 							lowerPredictionEstimate /= contributingWitnessCount;
 							upperPredictionEstimate /= contributingWitnessCount;
 							accuracyEstimate /= contributingWitnessCount;
+							
+							//condition based on information sharing
+							//faster than an if condition
+							alpha_s = alpha_s*boolToInt.get(IS_INFORMATION_SHARED);
 							
 							//account for adversary's own model
 							lowerPredictionEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(0) + alpha_s*lowerPredictionEstimate;
