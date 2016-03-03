@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -17,10 +18,11 @@ public class CompareSellersIndividually {
 	private static boolean	IS_VERBOSE		= false;
 	private static boolean	IS_OVERWRITE	= true;
 	//experiment settings
-	private static int		NUM_BUYERS				= 2;
-	private static int		NUM_LEARN_SELLERS 		= 1; //LearningWithBinarySearch
+	private static int		NUM_BUYERS				= 1;
+	private static int		NUM_LEARN_SELLERS 		= 5; //LearningWithBinarySearch
 	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
+	private static boolean	IS_INFORMATION_SHARED 	= false;
 	//q-learning parameters
 	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
@@ -32,10 +34,10 @@ public class CompareSellersIndividually {
 	private static double 	THRESHOLD 		= 50;
 	private static int		NUM_FEAT		= 8; 
 	private static double	DISCOUNT		= 0.5;
-	private static double	START_GUESS		= 75.001;
+	private static double	START_GUESS		= 85.001;
 	private static double	ACCURACY		= 0.95;
 	//io paths
-	private static String IN_PATH = "./input/letter_dataset/";
+	private static String IN_PATH = "./input/letter_dataset/letter";
 	private static String	OUT_PATH	= "./learningTest.txt";
 	
 	private static Writer myWriter;
@@ -45,6 +47,11 @@ public class CompareSellersIndividually {
 	{
 	    return 1 / (1 + Math.exp(-x));
 	}
+	//java does not support type conversion so we need this for speed
+	private static HashMap<Boolean, Integer> boolToInt = new HashMap<Boolean, Integer>() {{
+		put(true, 1);
+		put(false, 0);
+	}};
 
 	public static void main(String[] args) {
 		counter = 0;
@@ -79,7 +86,9 @@ public class CompareSellersIndividually {
 		Constant discountFunction = new Constant(discount);
 		//Linear discountFunction = new Linear(-0.05, 1);
 		
-		NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
+		//NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
+		Naive1D utilityFunction = new Naive1D(discountFunction);
+		utilityFunction.readInFeatures(IN_PATH);
 		
 		/* set up sellers */
 		//each seller maintains individual binary search instances for individual sellers
@@ -238,6 +247,10 @@ public class CompareSellersIndividually {
 							lowerPredictionEstimate /= contributingWitnessCount;
 							upperPredictionEstimate /= contributingWitnessCount;
 							accuracyEstimate /= contributingWitnessCount;
+							
+							//condition based on information sharing
+							//faster than an if condition
+							alpha_s = alpha_s*boolToInt.get(IS_INFORMATION_SHARED);
 							
 							//account for adversary's own model
 							lowerPredictionEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(0) + alpha_s*lowerPredictionEstimate;

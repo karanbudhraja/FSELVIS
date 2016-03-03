@@ -1,7 +1,12 @@
 package utilityFunc;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+
 import utilityFunc.discountFunc.AbsDiF;
 
 public class Naive1D extends AbsUtF{
@@ -10,6 +15,27 @@ public class Naive1D extends AbsUtF{
 	public Naive1D(AbsDiF newDiscountFunction) {
 		super(newDiscountFunction);
 		mIndexToUtil = new HashMap<Integer, Double>();
+	}
+	
+	public void readInFeatures(String path) {
+		try {
+			FileReader tempReader = new FileReader(path + 1 + ".txt");
+			BufferedReader reader = new BufferedReader(tempReader);
+
+			String line = reader.readLine();
+			while(line != null){					
+				String[] values = line.split(",");
+
+				Double modification = Double.parseDouble(values[0]);
+				mIndexToUtil.put(Integer.parseInt(values[1]), modification);
+				line = reader.readLine();
+			}
+
+			tempReader.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private double getRawUtility(ArrayList<Integer> featureSet) {
