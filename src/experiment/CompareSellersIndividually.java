@@ -19,10 +19,11 @@ public class CompareSellersIndividually {
 	private static boolean	IS_OVERWRITE	= true;
 	//experiment settings
 	private static int		NUM_BUYERS				= 1;
-	private static int		NUM_LEARN_SELLERS 		= 5; //LearningWithBinarySearch
+	private static int		NUM_LEARN_SELLERS 		= 2; //LearningWithBinarySearch
 	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_INFORMATION_SHARED 	= false;
+	private static boolean	IS_NAIVE_UTIL_FUNC		= false;
 	//q-learning parameters
 	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
@@ -30,7 +31,7 @@ public class CompareSellersIndividually {
 	private static double	DISCOUNT_FACTOR	= 0.99;
 	//game settings
 	private static int		NUM_GAMES		= 3000; 
-	private static int	 	NUM_ROUNDS		= 100;
+	private static int	 	NUM_ROUNDS		= 40;
 	private static double 	THRESHOLD 		= 50;
 	private static int		NUM_FEAT		= 8; 
 	private static double	DISCOUNT		= 0.5;
@@ -86,9 +87,14 @@ public class CompareSellersIndividually {
 		Constant discountFunction = new Constant(discount);
 		//Linear discountFunction = new Linear(-0.05, 1);
 		
-		//NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
-		Naive1D utilityFunction = new Naive1D(discountFunction);
-		utilityFunction.readInFeatures(IN_PATH);
+		AbsUtF utilityFunction;
+		if(!IS_NAIVE_UTIL_FUNC) {
+			utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
+		}
+		else {
+			utilityFunction = new Naive1D(discountFunction);
+			((Naive1D)utilityFunction).readInFeatures(IN_PATH);
+		}
 		
 		/* set up sellers */
 		//each seller maintains individual binary search instances for individual sellers

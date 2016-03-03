@@ -80,7 +80,7 @@ public class NDimen extends AbsUtF {
 				}
 			}
 			if(utility > 0)
-				mMemoizationTable.put(key, utility/2);
+				mMemoizationTable.put(key, mDiF.apply(utility));
 			else
 				mMemoizationTable.put(key, 0d);
 		}
