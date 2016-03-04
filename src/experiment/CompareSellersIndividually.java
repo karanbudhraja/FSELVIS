@@ -24,6 +24,7 @@ public class CompareSellersIndividually {
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_INFORMATION_SHARED 	= false;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= false;
+	private static boolean	IS_MULTIPLES			= false;
 	//q-learning parameters
 	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
@@ -89,10 +90,10 @@ public class CompareSellersIndividually {
 		
 		AbsUtF utilityFunction;
 		if(!IS_NAIVE_UTIL_FUNC) {
-			utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
+			utilityFunction = new NDimen(discountFunction, IS_MULTIPLES, IN_PATH, 1);
 		}
 		else {
-			utilityFunction = new Naive1D(discountFunction);
+			utilityFunction = new Naive1D(discountFunction, IS_MULTIPLES);
 			((Naive1D)utilityFunction).readInFeatures(IN_PATH);
 		}
 		

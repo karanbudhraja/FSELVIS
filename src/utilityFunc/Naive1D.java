@@ -12,8 +12,8 @@ import utilityFunc.discountFunc.AbsDiF;
 public class Naive1D extends AbsUtF{
 	protected HashMap<Integer, Double> mIndexToUtil;
 	
-	public Naive1D(AbsDiF newDiscountFunction) {
-		super(newDiscountFunction);
+	public Naive1D(AbsDiF newDiscountFunction, Boolean allowMultiples) {
+		super(newDiscountFunction, allowMultiples);
 		mIndexToUtil = new HashMap<Integer, Double>();
 	}
 	
@@ -47,13 +47,24 @@ public class Naive1D extends AbsUtF{
 	}
 	
 	public double getUtility(ArrayList<Integer> featureSet) {
+		handleMultiples(featureSet);
 		double toReturn = getRawUtility(featureSet);
+		if(mVerbose) System.out.println(featureSet + " = " + mDiF.apply(toReturn));
 		return mDiF.apply(toReturn);
 	}
 	
 	public double getUtilityIncrease(int featureIndex, ArrayList<Integer> featureSet) {
-		return mDiF.apply(mIndexToUtil.get(featureIndex) + getRawUtility(featureSet)) - 
-				mDiF.apply(getRawUtility(featureSet));
+		//double toReturn = mDiF.apply(mIndexToUtil.get(featureIndex) + getRawUtility(featureSet)) - 
+		//		mDiF.apply(getRawUtility(featureSet));
+		/*change below*/
+		ArrayList<Integer> temp = new ArrayList<Integer>();
+		for(Integer i : featureSet)
+			temp.add(i);
+		temp.add(featureIndex);
+		double toReturn = getUtility(temp) - getUtility(featureSet);
+		/*change above*/
+		if(mVerbose) System.out.println(featureSet + " + " + featureIndex + " -> " + toReturn);
+		return toReturn;
 	}
 	
 	public void addFeature(int index, double utility) {

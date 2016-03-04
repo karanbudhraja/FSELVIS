@@ -95,7 +95,7 @@ public class FullCycle {
 			//make utility function
 			//Constant discountFunction = new Constant(0.5);
 			Linear discountFunction = new Linear(-0.05, 1);
-			Naive1D utilityFunction = new Naive1D(discountFunction);
+			Naive1D utilityFunction = new Naive1D(discountFunction, false);
 			for(int i = 0; i < numFeat; i++) {
 				utilityFunction.addFeature(i, Math.random()*2.0*avgUtility);
 			}

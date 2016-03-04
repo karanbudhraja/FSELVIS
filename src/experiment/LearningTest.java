@@ -60,7 +60,7 @@ public class LearningTest {
 		Constant discountFunction = new Constant(discount);
 		//Linear discountFunction = new Linear(-0.05, 1);
 		
-		NDimen utilityFunction = new NDimen(discountFunction, IN_PATH, 1);
+		NDimen utilityFunction = new NDimen(discountFunction, false, IN_PATH, 1);
 		
 		//make adversary (+ give features)
 		AbsAdv adversary = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 

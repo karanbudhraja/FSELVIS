@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -14,8 +15,8 @@ public class NDimen extends AbsUtF {
 	protected int mDepth;
 	protected HashMap<String, Double> mMemoizationTable;
 	
-	public NDimen(AbsDiF newDiscountFunction, String path, int depth) {
-		super(newDiscountFunction);
+	public NDimen(AbsDiF newDiscountFunction, Boolean allowMultiples, String path, int depth) {
+		super(newDiscountFunction, allowMultiples);
 		mMemoizationTable = new HashMap<String, Double>();
 		mDepth = depth;
 		mAdjustTables = new ArrayList<HashMap<HashSet<Integer>, Double>>();
@@ -70,6 +71,8 @@ public class NDimen extends AbsUtF {
 	}
 
 	public double getUtility(ArrayList<Integer> featureSet) {
+		handleMultiples(featureSet);
+		Collections.sort(featureSet);
 		String key = featureSet.toString();
 		if(!mMemoizationTable.containsKey(key)) {
 			double utility = 0;
@@ -84,7 +87,7 @@ public class NDimen extends AbsUtF {
 			else
 				mMemoizationTable.put(key, 0d);
 		}
-		
+		if(mVerbose) System.out.println(featureSet + " = " + mMemoizationTable.get(key));
 		return mMemoizationTable.get(key);
 		
 	}
@@ -112,7 +115,9 @@ public class NDimen extends AbsUtF {
 	public double getUtilityIncrease(int featureIndex, ArrayList<Integer> featureSet) {
 		ArrayList<Integer> temp = new ArrayList<Integer>(featureSet);
 		temp.add(featureIndex);
-		return getUtility(temp) - getUtility(featureSet);
+		double toReturn = getUtility(temp) - getUtility(featureSet);
+		if(mVerbose) System.out.println(featureSet + " + " + featureIndex + " -> " + toReturn);
+		return toReturn;
 	}
 
 }
