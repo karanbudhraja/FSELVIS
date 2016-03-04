@@ -1,5 +1,10 @@
 package experiment;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,6 +23,7 @@ public class CompareSellersIndividually {
 	private static boolean	IS_VERBOSE		= false;
 	private static boolean	IS_OVERWRITE	= true;
 	//experiment settings
+	private static int		NUM_RUNS				= 2; 
 	private static int		NUM_BUYERS				= 1;
 	private static int		NUM_LEARN_SELLERS 		= 2; //LearningWithBinarySearch
 	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
@@ -39,8 +45,17 @@ public class CompareSellersIndividually {
 	private static double	START_GUESS		= 85.001;
 	private static double	ACCURACY		= 0.95;
 	//io paths
-	private static String IN_PATH = "./input/letter_dataset/letter";
-	private static String	OUT_PATH	= "./learningTest.txt";
+	private static String	IN_PATH = "./input/letter_dataset/letter";
+	private static String	OUT_PATH	= "./learningTest";
+	//indices to different parts of the data in file
+	private static int		F_NUM_ROUNDS	= 0;
+	private static int		F_THRESHOLD		= 1;
+	private static int		F_NUM_FEAT		= 2;
+	private static int		F_DISCOUNT		= 3;
+	private static int		F_START_GUESS	= 4;
+	private static int		F_ACCURACY		= 5;
+	private static int		F_ADV_UTILITY	= 6;
+	private static int		F_SEL_UTILITY	= 7;
 	
 	private static Writer myWriter;
 	private static int counter;
@@ -58,16 +73,104 @@ public class CompareSellersIndividually {
 	public static void main(String[] args) {
 		counter = 0;
 		
-		System.out.println("Running LearningTest");
-		myWriter = new Writer(OUT_PATH, IS_OVERWRITE);
-		myWriter.toBuffer("numRounds, threshold, numFeat, avgUtility, startGuess, accuracy, advUtility, selUtility\r\n");
-		myWriter.write();
+		//run all experiments
+		for(int e = 0; e < NUM_RUNS; e++) {
+			System.out.println("Running LearningTest #" + (e+1));
+			
+			//set up file writing
+			myWriter = new Writer(OUT_PATH + "_" + (e+1) + ".txt", IS_OVERWRITE);
+			
+			//run experiment
+			runExperiment(NUM_GAMES, NUM_ROUNDS, THRESHOLD, NUM_FEAT, DISCOUNT, START_GUESS, ACCURACY);
+			
+			//write file
+			System.out.println("Begin write");
+			myWriter.write();
+			System.out.println("Done!");
+		}
 		
-		runExperiment(NUM_GAMES, NUM_ROUNDS, THRESHOLD, NUM_FEAT, DISCOUNT, START_GUESS, ACCURACY);
-		
-		System.out.println("Begin write");
+		//set up file writer
+		myWriter = new Writer(OUT_PATH + ".txt", IS_OVERWRITE);
+		myWriter.toBuffer("numRounds, threshold, numFeat, DISCOUNT, startGuess, accuracy, advUtility, selUtility\r\n");
 		myWriter.write();
-		System.out.println("Done!");
+
+		//open files to compute average
+		BufferedReader[] myBufferReader = new BufferedReader[NUM_RUNS];
+		String[] fileBuffer = new String[NUM_RUNS];
+		
+		try {
+				for(int e = 0; e < NUM_RUNS; e++) {
+					//open buffer
+					myBufferReader[e] = new BufferedReader(new FileReader(OUT_PATH + "_" + (e+1) + ".txt"));
+				}
+
+				while (true) {
+					//read one line
+					int avgNumRounds = 0;
+					double avgThreshold = 0;
+					int avgNumfeat = 0;
+					double avgDiscount = 0;
+					double avgStartGuess = 0;
+					double avgAccuracy = 0;
+					double avgAdvUtility = 0;
+					double avgSelUtility = 0;
+
+					for(int e = 0; e < NUM_RUNS; e++) {
+						try {								
+								//check end of file
+								fileBuffer[e] = myBufferReader[e].readLine();
+								if(fileBuffer[e] == null){
+									//delete all individual files
+									for(int f = 0; f < NUM_RUNS; f++) {
+										File file = new File(OUT_PATH + "_" + (f+1) + ".txt");
+										file.delete();
+									}
+
+									//end of averaging
+									return;
+								}
+								
+								String[] tokenizedBuffer = fileBuffer[e].split(", ");
+
+								avgNumRounds += Integer.parseInt(tokenizedBuffer[F_NUM_ROUNDS]);
+								avgThreshold += Double.parseDouble(tokenizedBuffer[F_THRESHOLD]);
+								avgNumfeat += Integer.parseInt(tokenizedBuffer[F_NUM_FEAT]);
+								avgDiscount += Double.parseDouble(tokenizedBuffer[F_DISCOUNT]);
+								avgStartGuess += Double.parseDouble(tokenizedBuffer[F_START_GUESS]);
+								avgAccuracy += Double.parseDouble(tokenizedBuffer[F_ACCURACY]);
+								avgAdvUtility += Double.parseDouble(tokenizedBuffer[F_ADV_UTILITY]);
+								avgSelUtility += Double.parseDouble(tokenizedBuffer[F_SEL_UTILITY]);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}	
+					
+					//compute average
+					avgNumRounds /= NUM_RUNS;
+					avgThreshold /= NUM_RUNS;
+					avgNumfeat /= NUM_RUNS;
+					avgDiscount /= NUM_RUNS;
+					avgStartGuess /= NUM_RUNS;
+					avgAccuracy /= NUM_RUNS;
+					avgAdvUtility /= NUM_RUNS;
+					avgSelUtility /= NUM_RUNS;
+					
+					myWriter.toBuffer(
+							avgNumRounds + ", " +
+							avgThreshold + ", " + 
+							avgNumfeat + ", " + 
+							avgDiscount + ", " + 
+							avgStartGuess + ", " + 
+							avgAccuracy + ", " + 
+							avgAdvUtility + ", " + 
+							avgSelUtility + "\r\n");
+					myWriter.write();
+				}				
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}		
 	}
 
 	public static void runExperiment(int numGames, int numRounds, 
@@ -310,8 +413,8 @@ public class CompareSellersIndividually {
 				discount + ", " + 
 				startGuess + ", " + 
 				accuracy + ", " + 
-				(advSum) + ", " + 
-				(selSum) + "\r\n");
+				advSum + ", " + 
+				selSum + "\r\n");
 		}
 	}
 }
