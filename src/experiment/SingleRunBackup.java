@@ -14,6 +14,7 @@ public class SingleRunBackup {
 	private static double 	THRESHOLD 	= 1.0;
 	private static int 		NUM_ROUNDS 	= 25;
 	private static int		NUM_GAMES	= 5;
+	private static String IN_PATH = "/users/denizen/Desktop/AfsResults/input/letter";
 	private static String	FILE_PATH	= "/users/denizen/Desktop/AfsResults/testing.txt";
 
 	public static void main(String[] args) {
@@ -31,7 +32,7 @@ public class SingleRunBackup {
 			//make utility function
 			//Constant discountFunction = new Constant(0.5);
 			Linear discountFunction = new Linear(-0.05, 1);
-			Naive1D utilityFunction = new Naive1D(discountFunction, false);
+			Naive1D utilityFunction = new Naive1D(discountFunction, false, IN_PATH);
 			for(int i = 0; i < NUM_FEAT; i++) {
 				utilityFunction.addFeature(i, Math.random()*2.0*AVG_UTILITY);
 			}

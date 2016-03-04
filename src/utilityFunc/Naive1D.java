@@ -12,9 +12,11 @@ import utilityFunc.discountFunc.AbsDiF;
 public class Naive1D extends AbsUtF{
 	protected HashMap<Integer, Double> mIndexToUtil;
 	
-	public Naive1D(AbsDiF newDiscountFunction, Boolean allowMultiples) {
+	public Naive1D(AbsDiF newDiscountFunction, Boolean allowMultiples, String path) {
 		super(newDiscountFunction, allowMultiples);
 		mIndexToUtil = new HashMap<Integer, Double>();
+		
+		readInFeatures(path);
 	}
 	
 	public void readInFeatures(String path) {

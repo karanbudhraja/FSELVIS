@@ -23,7 +23,7 @@ public class CompareSellersIndividually {
 	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_INFORMATION_SHARED 	= false;
-	private static boolean	IS_NAIVE_UTIL_FUNC		= false;
+	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
 	//q-learning parameters
 	private static double	BASE_Q			= 30;
@@ -93,8 +93,7 @@ public class CompareSellersIndividually {
 			utilityFunction = new NDimen(discountFunction, IS_MULTIPLES, IN_PATH, 1);
 		}
 		else {
-			utilityFunction = new Naive1D(discountFunction, IS_MULTIPLES);
-			((Naive1D)utilityFunction).readInFeatures(IN_PATH);
+			utilityFunction = new Naive1D(discountFunction, IS_MULTIPLES, IN_PATH);
 		}
 		
 		/* set up sellers */
