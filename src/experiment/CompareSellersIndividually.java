@@ -23,7 +23,7 @@ public class CompareSellersIndividually {
 	private static boolean	IS_VERBOSE		= false;
 	private static boolean	IS_OVERWRITE	= true;
 	//experiment settings
-	private static int		NUM_RUNS				= 2; 
+	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 1;
 	private static int		NUM_LEARN_SELLERS 		= 2; //LearningWithBinarySearch
 	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
@@ -34,10 +34,10 @@ public class CompareSellersIndividually {
 	//q-learning parameters
 	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
-	private static double	LEARNING_RATE	= 0.9;
+	private static double	LEARNING_RATE	= 0.1;
 	private static double	DISCOUNT_FACTOR	= 0.99;
 	//game settings
-	private static int		NUM_GAMES		= 3000; 
+	private static int		NUM_GAMES		= 3000;
 	private static int	 	NUM_ROUNDS		= 40;
 	private static double 	THRESHOLD 		= 50;
 	private static int		NUM_FEAT		= 8; 
