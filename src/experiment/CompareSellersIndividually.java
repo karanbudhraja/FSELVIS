@@ -25,12 +25,16 @@ public class CompareSellersIndividually {
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 1;
-	private static int		NUM_LEARN_SELLERS 		= 2; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
+	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 8; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
-	private static boolean	IS_INFORMATION_SHARED 	= false;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
+	//witness settings
+	private static boolean	IS_INFORMATION_SHARED 	= true;
+	private static int 		K_S 					= 5;
+	private static double 	ALPHA_S 				= 0.1;
+	private static double 	WITNESS_SCORE_THRESHOLD = 0.0;
 	//q-learning parameters
 	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
@@ -276,9 +280,9 @@ public class CompareSellersIndividually {
 					
 					/* information gathering */
 					//gather information about sellers from other adversaries
-					int k_s = 5;
-					double alpha_s = 0.1;
-					double witnessScoreThreshold = 0.5;
+					int k_s = K_S;
+					double alpha_s = ALPHA_S;
+					double witnessScoreThreshold = WITNESS_SCORE_THRESHOLD;
 					
 					//select order of requesting adversaries randomly
 					ArrayList<Integer> adversaryIndices = new ArrayList<Integer>();
