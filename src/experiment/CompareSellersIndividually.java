@@ -33,7 +33,7 @@ public class CompareSellersIndividually {
 	//witness settings
 	private static boolean	IS_INFORMATION_SHARED 	= true;
 	private static int 		K_S 					= 5;
-	private static double 	ALPHA_S 				= 0.1;
+	private static double 	ALPHA_S 				= 1.0;
 	private static double 	WITNESS_SCORE_THRESHOLD = 0.0;
 	//q-learning parameters
 	private static double	BASE_Q			= 30;
@@ -50,7 +50,7 @@ public class CompareSellersIndividually {
 	private static double	ACCURACY		= 0.95;
 	//io paths
 	private static String	IN_PATH = "./input/letter_dataset/letter";
-	private static String	OUT_PATH	= "./learningTest";
+	private static String	OUT_PATH	= "./outFolder/learningTest";
 	//indices to different parts of the data in file
 	private static int		F_NUM_ROUNDS	= 0;
 	private static int		F_THRESHOLD		= 1;
@@ -337,9 +337,8 @@ public class CompareSellersIndividually {
 			
 					//now use witness information to condition adversary model of selectors
 					for(int k = 0; k < selectorList.size(); k++){
-						double lowerPredictionEstimate = 0;
-						double upperPredictionEstimate = 0;
-						double accuracyEstimate = 0;
+						double lowerPredictionEstimate = Double.MIN_VALUE;
+						double upperPredictionEstimate = Double.MAX_VALUE;
 						int contributingWitnessCount = 0;
 						
 						for(Integer witness : witnesses){
@@ -348,18 +347,20 @@ public class CompareSellersIndividually {
 								contributingWitnessCount++;
 								List<Double> modelEstimate = adversaryList.get(witness).get(k).getModelEstimate();
 
-								//taking average for now. can be made more complicated
-								lowerPredictionEstimate += modelEstimate.get(0);
-								upperPredictionEstimate += modelEstimate.get(1);
-								accuracyEstimate += modelEstimate.get(2);
+								//not taking average; instead, using witness with most info
+								if(modelEstimate.get(0) > lowerPredictionEstimate)
+									lowerPredictionEstimate = modelEstimate.get(0);
+								if(modelEstimate.get(1) < upperPredictionEstimate)
+									upperPredictionEstimate = modelEstimate.get(1);
+								//lowerPredictionEstimate += modelEstimate.get(0);
+								//upperPredictionEstimate += modelEstimate.get(1);
 							}
 						}
 						
 						if(contributingWitnessCount > 0){
-							//compute average estimate
-							lowerPredictionEstimate /= contributingWitnessCount;
-							upperPredictionEstimate /= contributingWitnessCount;
-							accuracyEstimate /= contributingWitnessCount;
+							//no need for average since the most extreme value is taken
+							//lowerPredictionEstimate /= contributingWitnessCount;
+							//upperPredictionEstimate /= contributingWitnessCount;
 							
 							//condition based on information sharing
 							//faster than an if condition
@@ -368,12 +369,11 @@ public class CompareSellersIndividually {
 							//account for adversary's own model
 							lowerPredictionEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(0) + alpha_s*lowerPredictionEstimate;
 							upperPredictionEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(1) + alpha_s*upperPredictionEstimate;
-							accuracyEstimate = (1 - alpha_s)*adversary.get(k).getModelEstimate().get(2) + alpha_s*accuracyEstimate;
-	
+							
 							//use these estimates to generate cost
 							//these changes are currently permanent to the adversary
 							//they may later be made temporary per round							
-							adversary.get(k).setModelEstimate(Arrays.asList(lowerPredictionEstimate, upperPredictionEstimate, accuracyEstimate));
+							adversary.get(k).setModelEstimate(Arrays.asList(lowerPredictionEstimate, upperPredictionEstimate));
 						}
 					}
 					/* end of information gathering */

@@ -23,13 +23,16 @@ public class BinarySearch extends AbsAdv {
 	}
 	
 	public List<Double> getModelEstimate(){
-		return Arrays.asList(mLowerPrediction, mUpperPrediction, mAccuracy);
+		return Arrays.asList(mLowerPrediction, mUpperPrediction);
 	}
 	
 	public void setModelEstimate(List<Double> modelEstimate){
-		mLowerPrediction = modelEstimate.get(0);
-		mUpperPrediction = modelEstimate.get(1);
-		mAccuracy = modelEstimate.get(2);
+		if(modelEstimate.get(0) > mLowerPrediction) {
+			mLowerPrediction = modelEstimate.get(0);
+		}
+		if(modelEstimate.get(1) < mUpperPrediction) {
+			mUpperPrediction = modelEstimate.get(1);
+		}
 	}
 	
 	public BinarySearch(double newUpperPrediction, double newAccuracy, AbsUtF newFunction) {
@@ -60,7 +63,7 @@ public class BinarySearch extends AbsAdv {
 			if(mVerbose) System.out.println("Adv predicition: " + mCurPrediction);
 			
 			double cost = mUtF.getUtilityIncrease(offer, mSellHistory)/mCurPrediction;
-			if(cost < 0) {
+			if(cost <= 0) {
 				//cost = 0;
 				mFeatures.remove((Integer)offer);
 				return false;
@@ -102,7 +105,9 @@ public class BinarySearch extends AbsAdv {
 	
 	public void processDecline(double cost, int index) {
 		super.processDecline(cost, index);
-		mLowerPrediction = mCurPrediction;
+		if(mLowerPrediction < mCurPrediction) {
+			mLowerPrediction = mCurPrediction;
+		}
 		updatePrediction();
 	}
 

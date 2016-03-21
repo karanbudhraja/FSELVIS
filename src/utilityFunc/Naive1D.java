@@ -49,22 +49,22 @@ public class Naive1D extends AbsUtF{
 	}
 	
 	public double getUtility(ArrayList<Integer> featureSet) {
-		handleMultiples(featureSet);
 		double toReturn = getRawUtility(featureSet);
 		if(mVerbose) System.out.println(featureSet + " = " + mDiF.apply(toReturn));
 		return mDiF.apply(toReturn);
 	}
 	
 	public double getUtilityIncrease(int featureIndex, ArrayList<Integer> featureSet) {
-		//double toReturn = mDiF.apply(mIndexToUtil.get(featureIndex) + getRawUtility(featureSet)) - 
-		//		mDiF.apply(getRawUtility(featureSet));
-		/*change below*/
-		ArrayList<Integer> temp = new ArrayList<Integer>();
-		for(Integer i : featureSet)
-			temp.add(i);
+		if(mAllowMultiples == false && featureSet.contains(featureIndex))
+			return 0;
+		
+		ArrayList<Integer> temp = new ArrayList<Integer>(featureSet);
+	//	for(Integer i : featureSet)
+	//		temp.add(i);
 		temp.add(featureIndex);
 		double toReturn = getUtility(temp) - getUtility(featureSet);
-		/*change above*/
+
+		
 		if(mVerbose) System.out.println(featureSet + " + " + featureIndex + " -> " + toReturn);
 		return toReturn;
 	}

@@ -71,7 +71,6 @@ public class NDimen extends AbsUtF {
 	}
 
 	public double getUtility(ArrayList<Integer> featureSet) {
-		handleMultiples(featureSet);
 		Collections.sort(featureSet);
 		String key = featureSet.toString();
 		if(!mMemoizationTable.containsKey(key)) {
@@ -113,6 +112,8 @@ public class NDimen extends AbsUtF {
 	}
 	
 	public double getUtilityIncrease(int featureIndex, ArrayList<Integer> featureSet) {
+		if(mAllowMultiples == false && featureSet.contains(featureIndex))
+			return 0;
 		ArrayList<Integer> temp = new ArrayList<Integer>(featureSet);
 		temp.add(featureIndex);
 		double toReturn = getUtility(temp) - getUtility(featureSet);

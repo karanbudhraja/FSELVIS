@@ -23,6 +23,7 @@ public abstract class AbsUtF {
 		mAllowMultiples = allowMultiples;
 	}
 	
+	/*
 	public void handleMultiples(ArrayList<Integer> featureSet) {
 		if(!mAllowMultiples) {
 			Set<Integer> tempSet = new HashSet<>();
@@ -30,7 +31,7 @@ public abstract class AbsUtF {
 			featureSet.clear();
 			featureSet.addAll(tempSet);
 		}
-	}
+	}*/
 	
 	public void setVerbose(boolean toSet) {
 		mVerbose = toSet;
