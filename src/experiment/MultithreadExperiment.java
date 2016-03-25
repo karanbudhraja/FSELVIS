@@ -22,12 +22,12 @@ public class MultithreadExperiment implements Runnable {
 
 	private static boolean	IS_VERBOSE		= false;
 	private static boolean	IS_OVERWRITE	= true;
-	private static int		NUM_THREADS		= 8;
+	private static int		NUM_THREADS		= 4;
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
-	private static int		NUM_BUYERS				= 1;
-	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 8; //BinarySearch (NOT learning)
+	private static int		NUM_BUYERS				= 8;
+	private static int		NUM_LEARN_SELLERS 		= 8; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
@@ -51,7 +51,7 @@ public class MultithreadExperiment implements Runnable {
 	private static double	ACCURACY		= 0.95;
 	//io paths
 	private static String	IN_PATH = "./input/letter_dataset/letter";
-	private static String	OUT_PATH	= "./outFolder/learningTest";
+	private static String	OUT_PATH	= "./outFolder/learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
 	//indices to different parts of the data in file
 	private static int		F_NUM_ROUNDS	= 0;
 	private static int		F_THRESHOLD		= 1;
@@ -401,16 +401,23 @@ public class MultithreadExperiment implements Runnable {
 				}
 
 				//output total utility 
-				AbsAdv adversary = (adversaryList.get(0)).get(0);
+				//AbsAdv adversary = (adversaryList.get(0)).get(0);
 				//System.out.println("\n" + adversary.getUtility() + " " + adversary.evaluateUtility() + " " + adversary.getCost());			
 				//System.out.println("Adversary: utility=" + (adversary.getUtility()/* + adversary.evaluateUtility() - adversary.getCost()*/));
 				//System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
 				//System.out.println("---------------"); 
 				//((LearningWithBinarySearch)adversary).dumpPolicy();
 
-				advSum = adversary.getUtility(); 
+				//advSum = adversary.getUtility(); 
 				//selSum = selector.getUtility() - selector.getCost();
-
+				
+				// use all face adversary utility instead
+				advSum = 0;
+				for(int face=0; face<NUM_BUYERS; face++){
+					AbsAdv adversary = (adversaryList.get(0)).get(face);
+					advSum += adversary.getUtility();						
+				}
+				
 				myWriter.toBuffer(
 						NUM_ROUNDS + ", " +
 								THRESHOLD + ", " + 
