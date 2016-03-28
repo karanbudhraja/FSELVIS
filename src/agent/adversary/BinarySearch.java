@@ -13,6 +13,9 @@ public class BinarySearch extends AbsAdv {
 	protected double mAccuracy;
 	protected int mMostRecentOffer;
 	protected int mInteractionCount;
+	protected double mLowWeight;
+	protected double mHighWeight;
+	protected boolean mIsWeightedAverage;
 	
 	public int getMostRecentOffer(){
 		return mMostRecentOffer;
@@ -28,14 +31,17 @@ public class BinarySearch extends AbsAdv {
 	
 	public void setModelEstimate(List<Double> modelEstimate){
 		if(modelEstimate.get(0) > mLowerPrediction) {
+			mLowWeight +=modelEstimate.get(0) -  mLowerPrediction;
 			mLowerPrediction = modelEstimate.get(0);
 		}
 		if(modelEstimate.get(1) < mUpperPrediction) {
+			mHighWeight += mUpperPrediction - modelEstimate.get(1);
 			mUpperPrediction = modelEstimate.get(1);
 		}
 	}
 	
-	public BinarySearch(double newUpperPrediction, double newAccuracy, AbsUtF newFunction) {
+	public BinarySearch(double newUpperPrediction, double newAccuracy, AbsUtF newFunction, 
+			boolean newIsWeightedAverage, double newExpectedRange) {
 		super(newFunction);
 		mUpperPrediction = newUpperPrediction;
 		mAccuracy = newAccuracy;
@@ -43,6 +49,10 @@ public class BinarySearch extends AbsAdv {
 		
 		mMostRecentOffer = -1;
 		mInteractionCount = 0;
+		
+		mLowWeight = newExpectedRange;
+		mHighWeight = newExpectedRange;
+		mIsWeightedAverage = newIsWeightedAverage;
 	}
 	
 	public int whichFeature(AbsSel target) {
@@ -91,13 +101,19 @@ public class BinarySearch extends AbsAdv {
 			mCurPrediction = mUpperPrediction;
 		}
 		else {
-			mCurPrediction = (mUpperPrediction + mLowerPrediction) / 2;
+			if(mIsWeightedAverage) {
+				mCurPrediction = (mUpperPrediction*mHighWeight + mLowerPrediction*mLowWeight) / (mHighWeight+mLowWeight);
+			}
+			else {
+				mCurPrediction = (mUpperPrediction + mLowerPrediction) / 2;
+			}
 		}
 	}
 	
 	public void processAccept(double cost, int index) {
 		super.processAccept(cost, index);
 		if(mUpperPrediction > mCurPrediction) {
+			mHighWeight += mUpperPrediction - mCurPrediction;
 			mUpperPrediction = mCurPrediction;
 		}
 		updatePrediction();
@@ -106,6 +122,7 @@ public class BinarySearch extends AbsAdv {
 	public void processDecline(double cost, int index) {
 		super.processDecline(cost, index);
 		if(mLowerPrediction < mCurPrediction) {
+			mLowWeight += mCurPrediction - mLowerPrediction;
 			mLowerPrediction = mCurPrediction;
 		}
 		updatePrediction();

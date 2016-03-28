@@ -107,7 +107,7 @@ public class FullCycle {
 			
 			ArrayList<AbsAdv> adversary1 = new ArrayList<AbsAdv>();
 			for(int id=0; id<2; id++){
-				AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
+				AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction, false, 10);
 				adversaryEntity.setVerbose(IS_VERBOSE);
 				for(int i = 0; i < numFeat; i++) {
 					adversaryEntity.addFeature(i);
@@ -118,7 +118,7 @@ public class FullCycle {
 			
 			ArrayList<AbsAdv> adversary2 = new ArrayList<AbsAdv>();
 			for(int id=0; id<2; id++){
-				AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
+				AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction, false, 10);
 				adversaryEntity.setVerbose(IS_VERBOSE);
 				for(int i = 0; i < numFeat; i++) {
 					adversaryEntity.addFeature(i);

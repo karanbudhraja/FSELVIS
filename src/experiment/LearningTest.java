@@ -64,7 +64,7 @@ public class LearningTest {
 		
 		//make adversary (+ give features)
 		AbsAdv adversary = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 
-				BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);
+				BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR, false, 10);
 		
 		for(int j = 0; j < numGames; j++) {
 			//AbsAdv adversary = new BinarySearch(startGuess, accuracy, utilityFunction);

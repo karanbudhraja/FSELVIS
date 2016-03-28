@@ -14,9 +14,9 @@ public class LearningWithBinarySearch extends BinarySearch {
 	protected double mDiscountFactor;
 	
 	public LearningWithBinarySearch(double newUpperPrediction, double newAccuracy, 
-			AbsUtF newFunction, double newBaseQ, double newEpsilon,
-			double newLearningRate, double newDiscountFactor) {
-		super(newUpperPrediction, newAccuracy, newFunction);
+			AbsUtF newFunction, double newBaseQ, double newEpsilon, double newLearningRate, 
+			double newDiscountFactor, boolean newIsWeightedAverage, double newExpectedRange) {
+		super(newUpperPrediction, newAccuracy, newFunction, newIsWeightedAverage, newExpectedRange);
 		mBaseQ = newBaseQ;
 		mEpsilon = newEpsilon;
 		mLearningRate = newLearningRate;

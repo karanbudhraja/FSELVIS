@@ -22,7 +22,7 @@ public class MultithreadExperiment implements Runnable {
 
 	private static boolean	IS_VERBOSE		= false;
 	private static boolean	IS_OVERWRITE	= true;
-	private static int		NUM_THREADS		= 8;
+	private static int		NUM_THREADS		= 10;
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 1;
@@ -31,6 +31,7 @@ public class MultithreadExperiment implements Runnable {
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
+	private static boolean	IS_WEIGHTED_AVERAGE		= true;
 	//witness settings
 	private static boolean	IS_INFORMATION_SHARED 	= true;
 	private static int 		K_S 					= 5;
@@ -42,12 +43,13 @@ public class MultithreadExperiment implements Runnable {
 	private static double	LEARNING_RATE	= 0.1;
 	private static double	DISCOUNT_FACTOR	= 0.99;
 	//game settings
-	private static int		NUM_GAMES		= 30;
-	private static int	 	NUM_ROUNDS		= 200;
+	private static int		NUM_GAMES		= 3;
+	private static int	 	NUM_ROUNDS		= 40;
 	private static double 	THRESHOLD 		= 50;
-	private static int		NUM_FEAT		= 16; 
+	private static int		NUM_FEAT		= 8; 
 	private static double	DISCOUNT		= 0.5;
-	private static double	START_GUESS		= 8500.001;
+	private static double	START_GUESS		= 85.001;
+	private static double	EXPECTED_RANGE	= 10;
 	private static double	ACCURACY		= 0.95;
 	//io paths
 	private static String	IN_PATH = "./input/letter_dataset/letter";
@@ -74,7 +76,7 @@ public class MultithreadExperiment implements Runnable {
 	}};
 
 	private static int runNumber; //used to allocate experiments to threads on a First-come-first-served basis
-	private volatile static AbsUtF utilityFunction; //single global utility function
+	private static AbsUtF utilityFunction; //single global utility function
 	public static void main(String[] args) {
 		//make utility function
 		Constant discountFunction = new Constant(DISCOUNT);
@@ -102,7 +104,7 @@ public class MultithreadExperiment implements Runnable {
 			}
 		}
 		long stopTime = System.currentTimeMillis();
-		System.out.println("Time taken (minutes): " + (stopTime - startTime)/60000l);
+		System.out.println("Time taken (minutes): " + (stopTime - startTime)/60000d);
 
 		//set up file writer
 		Writer mainWriter;
@@ -213,7 +215,7 @@ public class MultithreadExperiment implements Runnable {
 				ArrayList<AbsAdv> lwbsAdversary = new ArrayList<AbsAdv>();
 				for(int id=0; id<NUM_BUYERS; id++){
 					AbsAdv adversaryEntity = new LearningWithBinarySearch(START_GUESS, ACCURACY, utilityFunction, 
-							BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);			
+							BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR, IS_WEIGHTED_AVERAGE, EXPECTED_RANGE);			
 					adversaryEntity.setVerbose(IS_VERBOSE);
 					lwbsAdversary.add(adversaryEntity);
 				}
@@ -237,7 +239,7 @@ public class MultithreadExperiment implements Runnable {
 				for(int k = 0; k < NUM_BASIC_SELLERS; k++) {
 					ArrayList<AbsAdv> bsAdversary = new ArrayList<AbsAdv>();
 					for(int id=0; id<NUM_BUYERS; id++){
-						AbsAdv adversaryEntity = new BinarySearch(START_GUESS, ACCURACY, utilityFunction);
+						AbsAdv adversaryEntity = new BinarySearch(START_GUESS, ACCURACY, utilityFunction, IS_WEIGHTED_AVERAGE, EXPECTED_RANGE);
 						adversaryEntity.setVerbose(IS_VERBOSE);
 						bsAdversary.add(adversaryEntity);
 					}

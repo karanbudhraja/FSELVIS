@@ -212,7 +212,7 @@ public class CompareSellersIndividually {
 			ArrayList<AbsAdv> lwbsAdversary = new ArrayList<AbsAdv>();
 			for(int id=0; id<NUM_BUYERS; id++){
 				AbsAdv adversaryEntity = new LearningWithBinarySearch(startGuess, accuracy, utilityFunction, 
-						BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR);			
+						BASE_Q, EPSILON, LEARNING_RATE, DISCOUNT_FACTOR, false, 10);			
 				adversaryEntity.setVerbose(IS_VERBOSE);
 				lwbsAdversary.add(adversaryEntity);
 			}
@@ -236,7 +236,7 @@ public class CompareSellersIndividually {
 			for(int k = 0; k < NUM_BASIC_SELLERS; k++) {
 				ArrayList<AbsAdv> bsAdversary = new ArrayList<AbsAdv>();
 				for(int id=0; id<NUM_BUYERS; id++){
-					AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction);
+					AbsAdv adversaryEntity = new BinarySearch(startGuess, accuracy, utilityFunction, false, 10);
 					adversaryEntity.setVerbose(IS_VERBOSE);
 					bsAdversary.add(adversaryEntity);
 				}

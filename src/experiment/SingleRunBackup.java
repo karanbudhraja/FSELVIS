@@ -38,7 +38,7 @@ public class SingleRunBackup {
 			}
 
 			//make adversary (+ give features)
-			AbsAdv adversary = new BinarySearch(START_GUESS, ACCURACY, utilityFunction);
+			AbsAdv adversary = new BinarySearch(START_GUESS, ACCURACY, utilityFunction, false, 10);
 			adversary.setVerbose(IS_VERBOSE);
 			for(int i = 0; i < NUM_FEAT; i++) {
 				adversary.addFeature(i);
