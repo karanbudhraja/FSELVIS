@@ -25,9 +25,9 @@ public class MultithreadExperiment implements Runnable {
 	private static int		NUM_THREADS		= 10;
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
-	private static int		NUM_BUYERS				= 1;
-	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 8; //BinarySearch (NOT learning)
+	private static int		NUM_BUYERS				= 8;
+	private static int		NUM_LEARN_SELLERS 		= 8; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
@@ -403,16 +403,24 @@ public class MultithreadExperiment implements Runnable {
 				}
 
 				//output total utility 
-				AbsAdv adversary = (adversaryList.get(0)).get(0);
+				//AbsAdv adversary = (adversaryList.get(0)).get(0);
 				//System.out.println("\n" + adversary.getUtility() + " " + adversary.evaluateUtility() + " " + adversary.getCost());			
 				//System.out.println("Adversary: utility=" + (adversary.getUtility()/* + adversary.evaluateUtility() - adversary.getCost()*/));
 				//System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
 				//System.out.println("---------------"); 
 				//((LearningWithBinarySearch)adversary).dumpPolicy();
 
-				advSum = adversary.getUtility(); 
+				//advSum = adversary.getUtility(); 
 				//selSum = selector.getUtility() - selector.getCost();
+				
+				advSum = 0;
+				int maxFace = 1;
+				//maxFace = NUM_BUYERS;
 
+				for(int face=0; face<maxFace; face++){
+					AbsAdv adversary = (adversaryList.get(0)).get(face);
+					advSum += adversary.getUtility();						
+				}
 				myWriter.toBuffer(
 						NUM_ROUNDS + ", " +
 								THRESHOLD + ", " + 
