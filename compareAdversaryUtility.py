@@ -19,4 +19,6 @@ for i in range(0,11,1):
 
 plt.plot(maxs)
 plt.plot(means)
+plt.ylabel('advUtility')
+plt.xlabel('threshold (x10)')
 plt.show()

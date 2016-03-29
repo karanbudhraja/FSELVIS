@@ -35,8 +35,8 @@ public class MultithreadExperiment implements Runnable {
 	//witness settings
 	private static boolean	IS_INFORMATION_SHARED 	= true;
 	private static int 		K_S 					= 5;
-	private static double 	ALPHA_S 				= 1.0;
-	private static double 	WITNESS_SCORE_THRESHOLD = 0.0;
+	private static double 	ALPHA_S 				= 0.1;
+	private static double 	WITNESS_SCORE_THRESHOLD = 0.1;
 	//q-learning parameters
 	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
@@ -77,7 +77,18 @@ public class MultithreadExperiment implements Runnable {
 
 	private static int runNumber; //used to allocate experiments to threads on a First-come-first-served basis
 	private static AbsUtF utilityFunction; //single global utility function
+	
 	public static void main(String[] args) {
+		
+		for(int k = 0; k <= 10; k++){
+			ALPHA_S = 1.0;
+			WITNESS_SCORE_THRESHOLD = k/10.0;
+			OUT_PATH = "./outFolder/learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
+			_main(args);			
+		}
+	}
+	
+	private static void _main(String[] args) {
 		//make utility function
 		Constant discountFunction = new Constant(DISCOUNT);
 		if(!IS_NAIVE_UTIL_FUNC) {
