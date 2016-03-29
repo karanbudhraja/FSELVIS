@@ -26,8 +26,8 @@ public class MultithreadExperiment implements Runnable {
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 8;
-	private static int		NUM_LEARN_SELLERS 		= 8; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
+	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 8; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
@@ -43,7 +43,7 @@ public class MultithreadExperiment implements Runnable {
 	private static double	LEARNING_RATE	= 0.1;
 	private static double	DISCOUNT_FACTOR	= 0.99;
 	//game settings
-	private static int		NUM_GAMES		= 3;
+	private static int		NUM_GAMES		= 30;
 	private static int	 	NUM_ROUNDS		= 40;
 	private static double 	THRESHOLD 		= 50;
 	private static int		NUM_FEAT		= 8; 
@@ -53,7 +53,7 @@ public class MultithreadExperiment implements Runnable {
 	private static double	ACCURACY		= 0.95;
 	//io paths
 	private static String	IN_PATH = "./input/letter_dataset/letter";
-	private static String	OUT_PATH	= "./outFolder/learningTest";
+	private static String	OUT_PATH	= "./outFolder/learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
 	//indices to different parts of the data in file
 	private static int		F_NUM_ROUNDS	= 0;
 	private static int		F_THRESHOLD		= 1;
