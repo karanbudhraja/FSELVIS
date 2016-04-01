@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import utilityFunc.*;
@@ -26,8 +27,8 @@ public class MultithreadExperiment implements Runnable {
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 8;
-	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 8; //BinarySearch (NOT learning)
+	private static int		NUM_LEARN_SELLERS 		= 8; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
@@ -38,7 +39,7 @@ public class MultithreadExperiment implements Runnable {
 	private static double 	ALPHA_S 				= 0.1;
 	private static double 	WITNESS_SCORE_THRESHOLD = 0.1;
 	//q-learning parameters
-	private static double	BASE_Q			= 30;
+	private static double	BASE_Q			= 300;
 	private static double	EPSILON			= 0.0;
 	private static double	LEARNING_RATE	= 0.1;
 	private static double	DISCOUNT_FACTOR	= 0.99;
@@ -63,7 +64,7 @@ public class MultithreadExperiment implements Runnable {
 	private static int		F_ACCURACY		= 5;
 	private static int		F_ADV_UTILITY	= 6;
 	private static int		F_SEL_UTILITY	= 7;
-
+	
 	private static double sigmoid(double x)
 	{
 	    return 1 / (1 + Math.exp(-x));
@@ -81,7 +82,7 @@ public class MultithreadExperiment implements Runnable {
 	public static void main(String[] args) {
 		
 		for(int k = 0; k <= 10; k++){
-			ALPHA_S = 1.0;
+			ALPHA_S = 0.9;
 			WITNESS_SCORE_THRESHOLD = k/10.0;
 			OUT_PATH = "./outFolder/learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
 			_main(args);			
@@ -173,7 +174,7 @@ public class MultithreadExperiment implements Runnable {
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-				}	
+				}
 
 				//compute average
 				avgNumRounds /= NUM_RUNS;
@@ -263,9 +264,11 @@ public class MultithreadExperiment implements Runnable {
 				//if we wish to model the sellers, then one buyer can be represented as multiple buyers
 				//in a manner similar to seller implementation
 				ArrayList<AbsSel> selectorList = new ArrayList<AbsSel>();
-
+				Random randomGenerator = new Random();
+				
 				for(int id=0; id<NUM_BUYERS; id++){
-					AbsSel selector = new UtilityThreshold(THRESHOLD, utilityFunction);
+					double threshold = randomGenerator.nextGaussian()*EXPECTED_RANGE + THRESHOLD;
+					AbsSel selector = new UtilityThreshold(threshold, utilityFunction);
 					selector.setVerbose(IS_VERBOSE);
 					selectorList.add(selector);
 				}			
