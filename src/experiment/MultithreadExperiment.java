@@ -264,7 +264,7 @@ public class MultithreadExperiment implements Runnable {
 				//if we wish to model the sellers, then one buyer can be represented as multiple buyers
 				//in a manner similar to seller implementation
 				ArrayList<AbsSel> selectorList = new ArrayList<AbsSel>();
-				Random randomGenerator = new Random();
+				Random randomGenerator = new Random(0);
 				
 				for(int id=0; id<NUM_BUYERS; id++){
 					double threshold = randomGenerator.nextGaussian()*EXPECTED_RANGE/2 + THRESHOLD;
