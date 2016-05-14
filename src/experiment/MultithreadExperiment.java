@@ -35,7 +35,7 @@ public class MultithreadExperiment implements Runnable {
 	private static boolean	IS_WEIGHTED_AVERAGE		= true;
 	//witness settings
 	private static boolean	IS_INFORMATION_SHARED 	= true;
-	private static int 		K_S 					= 5;
+	private static int 		K_S 					= 4;
 	private static double 	ALPHA_S 				= 0.1;	// ignore this. values are assigned in main loop
 	private static double 	WITNESS_SCORE_THRESHOLD = 0.1;	// ignore this. values are assigned in main loop
 	//q-learning parameters
