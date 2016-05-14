@@ -36,15 +36,15 @@ public class MultithreadExperiment implements Runnable {
 	//witness settings
 	private static boolean	IS_INFORMATION_SHARED 	= true;
 	private static int 		K_S 					= 5;
-	private static double 	ALPHA_S 				= 0.1;
-	private static double 	WITNESS_SCORE_THRESHOLD = 0.1;
+	private static double 	ALPHA_S 				= 0.1;	// ignore this. values are assigned in main loop
+	private static double 	WITNESS_SCORE_THRESHOLD = 0.1;	// ignore this. values are assigned in main loop
 	//q-learning parameters
-	private static double	BASE_Q			= 300;
+	private static double	BASE_Q			= 30;
 	private static double	EPSILON			= 0.0;
 	private static double	LEARNING_RATE	= 0.1;
 	private static double	DISCOUNT_FACTOR	= 0.99;
 	//game settings
-	private static int		NUM_GAMES		= 30;
+	private static int		NUM_GAMES		= 300;
 	private static int	 	NUM_ROUNDS		= 40;
 	private static double 	THRESHOLD 		= 50;
 	private static int		NUM_FEAT		= 8; 
@@ -293,6 +293,10 @@ public class MultithreadExperiment implements Runnable {
 				//run random number of rounds
 				for(int i = 0; i < NUM_ROUNDS; i++) {
 					// each adversary is a list of adversaries maintaining buyer information
+					
+					// karan: randomize adversary list here
+					Collections.shuffle(adversaryList);
+					
 					for(ArrayList<AbsAdv> adversary : adversaryList){					
 
 						/* information gathering */
