@@ -25,13 +25,13 @@ public class CompareSellersIndividually {
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 1;
-	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 8; //BinarySearch (NOT learning)
+	private static int		NUM_LEARN_SELLERS 		= 1; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 1; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
 	//witness settings
-	private static boolean	IS_INFORMATION_SHARED 	= true;
+	private static boolean	IS_INFORMATION_SHARED 	= false;
 	private static int 		K_S 					= 5;
 	private static double 	ALPHA_S 				= 1.0;
 	private static double 	WITNESS_SCORE_THRESHOLD = 0.0;
