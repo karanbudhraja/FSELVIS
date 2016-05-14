@@ -267,7 +267,7 @@ public class MultithreadExperiment implements Runnable {
 				Random randomGenerator = new Random();
 				
 				for(int id=0; id<NUM_BUYERS; id++){
-					double threshold = randomGenerator.nextGaussian()*EXPECTED_RANGE + THRESHOLD;
+					double threshold = randomGenerator.nextGaussian()*EXPECTED_RANGE/2 + THRESHOLD;
 					AbsSel selector = new UtilityThreshold(threshold, utilityFunction);
 					selector.setVerbose(IS_VERBOSE);
 					selectorList.add(selector);
@@ -292,11 +292,7 @@ public class MultithreadExperiment implements Runnable {
 
 				//run random number of rounds
 				for(int i = 0; i < NUM_ROUNDS; i++) {
-					// each adversary is a list of adversaries maintaining buyer information
-					
-					// karan: randomize adversary list here
-					Collections.shuffle(adversaryList);
-					
+					// each adversary is a list of adversaries maintaining buyer information					
 					for(ArrayList<AbsAdv> adversary : adversaryList){					
 
 						/* information gathering */
