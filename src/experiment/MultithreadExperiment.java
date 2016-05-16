@@ -35,7 +35,7 @@ public class MultithreadExperiment implements Runnable {
 	private static boolean	IS_WEIGHTED_AVERAGE		= true;
 	//witness settings
 	private static boolean	IS_INFORMATION_SHARED 	= true;
-	private static int 		K_S 					= 4;
+	private static int 		K_S 					= 8;
 	private static double 	ALPHA_S 				= 0.1;	// ignore this. values are assigned in main loop
 	private static double 	WITNESS_SCORE_THRESHOLD = 0.1;	// ignore this. values are assigned in main loop
 	//q-learning parameters
@@ -82,7 +82,7 @@ public class MultithreadExperiment implements Runnable {
 	public static void main(String[] args) {
 		
 		for(int k = 0; k <= 10; k++){
-			ALPHA_S = 0.9;
+			ALPHA_S = 1.0;
 			WITNESS_SCORE_THRESHOLD = k/10.0;
 			OUT_PATH = "./outFolder/learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
 			_main(args);			
@@ -435,6 +435,7 @@ public class MultithreadExperiment implements Runnable {
 					AbsAdv adversary = (adversaryList.get(0)).get(face);
 					advSum += adversary.getUtility();						
 				}
+								
 				myWriter.toBuffer(
 						NUM_ROUNDS + ", " +
 								THRESHOLD + ", " + 

@@ -1,15 +1,15 @@
 import numpy
 import matplotlib.pyplot as plt
 
-
+'''
 binarySearchData = numpy.loadtxt("outFolder/learningTest.txt", delimiter=",", skiprows=1)
 binarySearchData = numpy.flipud(binarySearchData)
 plt.plot(binarySearchData[:,-2])
 plt.ylabel('Seller Utility')
 plt.xlabel('Game Number')
 plt.show()
-
 '''
+
 maxs = []
 means = []
 for i in range(0,11,1):
@@ -20,9 +20,9 @@ for i in range(0,11,1):
     maxs.append(max(utilityData))
     means.append(numpy.mean(utilityData))
 
-plt.plot(maxs)
-plt.plot(means)
-plt.ylabel('advUtility')
-plt.xlabel('threshold (x10)')
+xValues = [x/10.0 for x in range(11)]
+#plt.plot(xValues, maxs)
+plt.plot(xValues, means)
+plt.ylabel('Seller Utility')
+plt.xlabel('Game Number')
 plt.show()
-'''
