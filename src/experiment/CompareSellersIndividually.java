@@ -27,8 +27,8 @@ public class CompareSellersIndividually {
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 1;
-	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 2; //BinarySearch (NOT learning)
+	private static int		NUM_LEARN_SELLERS 		= 1; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 1; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
@@ -203,27 +203,6 @@ public class CompareSellersIndividually {
 					statAccuracy = getMean(accuracyList);
 					statAdvUtility = getMean(advUtilityList);
 					statSelUtility = getMean(selUtilityList);
-					
-					myWriter.toBuffer(
-							statNumRounds + ", " +
-							statThreshold + ", " + 
-							statNumfeat + ", " + 
-							statDiscount + ", " + 
-							statStartGuess + ", " + 
-							statAccuracy + ", " + 
-							statAdvUtility + ", " + 
-							statSelUtility + "\r\n");
-					myWriter.write();
-
-					//compute standard deviation
-					statNumRounds = getStdDev(numRoundsList);
-					statThreshold = getStdDev(thresholdList);
-					statNumfeat = getStdDev(numFeatList);
-					statDiscount = getStdDev(discountList);
-					statStartGuess = getStdDev(startGuessList);
-					statAccuracy = getStdDev(accuracyList);
-					statAdvUtility = getStdDev(advUtilityList);
-					statSelUtility = getStdDev(selUtilityList);
 					
 					myWriter.toBuffer(
 							statNumRounds + ", " +
@@ -467,7 +446,7 @@ public class CompareSellersIndividually {
 			//output total utility 
 			AbsAdv adversary = (adversaryList.get(0)).get(0);
 			//System.out.println("\n" + adversary.getUtility() + " " + adversary.evaluateUtility() + " " + adversary.getCost());			
-			System.out.println("Adversary: utility=" + (adversary.getUtility()/* + adversary.evaluateUtility() - adversary.getCost()*/));
+			//System.out.println("Adversary: utility=" + (adversary.getUtility()/* + adversary.evaluateUtility() - adversary.getCost()*/));
 			//System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
 			//System.out.println("---------------"); 
 			//((LearningWithBinarySearch)adversary).dumpPolicy();

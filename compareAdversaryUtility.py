@@ -4,20 +4,16 @@ import matplotlib.pyplot as plt
 binarySearchData = numpy.loadtxt("outFolder/learningTest.txt", delimiter=",", skiprows=1)
 binarySearchData = numpy.flipud(binarySearchData)
 plotData = binarySearchData[:,-2]
-# odd rows are average
-# even rows are std dev
-avgData = plotData[1::2]
-stdDevData = plotData[0::2]
-upperLimitData = [avgData[i] + stdDevData[i] for i in range(len(avgData))]
-lowerLimitData = [avgData[i] - stdDevData[i] for i in range(len(avgData))]
-x = range(len(avgData))
+# running average
+k = 50
+indexLists = [range(n, n+k) for n in range(len(plotData)-k+1)]
+for i in range(k-1):
+    indexLists.append(indexLists[-1])
+avgData = [numpy.mean(plotData[indexLists[i]]) for i in range(len(indexLists))]
+upperLimitData = [numpy.max(plotData[indexLists[i]]) for i in range(len(indexLists))]
+lowerLimitData = [numpy.min(plotData[indexLists[i]]) for i in range(len(indexLists))]
+x = range(len(plotData))
 x = [xx+1 for xx in x]
-# shrink data for error bar
-#samplingRate = 1
-#avgData = avgData[::samplingRate]
-#stdDevData = stdDevData[::samplingRate]
-#x = x[::samplingRate]
-#plt.errorbar(x, avgData, yerr=stdDevData)
 plt.plot(avgData)
 plt.fill_between(x, upperLimitData, lowerLimitData, alpha=0.5)
 plt.ylabel('Seller Utility')
