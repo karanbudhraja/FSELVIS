@@ -18,6 +18,8 @@ import utilityFunc.discountFunc.*;
 import agent.adversary.*;
 import agent.selector.*;
 
+import java.lang.Math;
+
 public class CompareSellersIndividually {
 
 	private static boolean	IS_VERBOSE		= false;
@@ -25,8 +27,8 @@ public class CompareSellersIndividually {
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 1;
-	private static int		NUM_LEARN_SELLERS 		= 1; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 1; //BinarySearch (NOT learning)
+	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 2; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
@@ -74,6 +76,38 @@ public class CompareSellersIndividually {
 		put(false, 0);
 	}};
 
+	// statistical values
+	private static double getMean(ArrayList<Double> data)
+    {
+        double sum = 0;
+        for(int i = 0; i < data.size(); i++){
+        	   sum += data.get(i); // this is the calculation for summing up all the values
+    	}
+        return sum/data.size();
+    }
+
+	private static double getVariance(ArrayList<Double> data)
+    {
+        double mean = getMean(data);
+        double temp = 0;
+        for(int i = 0; i < data.size(); i++){
+            temp += Math.pow(mean-data.get(i), 2);
+        }
+        return temp/data.size();
+    }
+
+    private static double getStdDev(ArrayList<Double> data)
+    {
+        return Math.sqrt(getVariance(data));
+    }
+
+	private static double getError(ArrayList<Double> data)
+    {
+        double max = Collections.max(data);
+        double min = Collections.min(data);
+        return (max-min)/2;
+    }
+    
 	public static void main(String[] args) {
 		counter = 0;
 		
@@ -110,15 +144,24 @@ public class CompareSellersIndividually {
 
 				while (true) {
 					//read one line
-					int avgNumRounds = 0;
-					double avgThreshold = 0;
-					int avgNumfeat = 0;
-					double avgDiscount = 0;
-					double avgStartGuess = 0;
-					double avgAccuracy = 0;
-					double avgAdvUtility = 0;
-					double avgSelUtility = 0;
+					double statNumRounds = 0;
+					double statThreshold = 0;
+					double statNumfeat = 0;
+					double statDiscount = 0;
+					double statStartGuess = 0;
+					double statAccuracy = 0;
+					double statAdvUtility = 0;
+					double statSelUtility = 0;
 
+					ArrayList<Double> numRoundsList = new ArrayList<Double>();
+					ArrayList<Double> thresholdList = new ArrayList<Double>();
+					ArrayList<Double> numFeatList = new ArrayList<Double>();
+					ArrayList<Double> discountList = new ArrayList<Double>();
+					ArrayList<Double> startGuessList = new ArrayList<Double>();
+					ArrayList<Double> accuracyList = new ArrayList<Double>();
+					ArrayList<Double> advUtilityList = new ArrayList<Double>();
+					ArrayList<Double> selUtilityList = new ArrayList<Double>();
+					
 					for(int e = 0; e < NUM_RUNS; e++) {
 						try {								
 								//check end of file
@@ -135,15 +178,16 @@ public class CompareSellersIndividually {
 								}
 								
 								String[] tokenizedBuffer = fileBuffer[e].split(", ");
-
-								avgNumRounds += Integer.parseInt(tokenizedBuffer[F_NUM_ROUNDS]);
-								avgThreshold += Double.parseDouble(tokenizedBuffer[F_THRESHOLD]);
-								avgNumfeat += Integer.parseInt(tokenizedBuffer[F_NUM_FEAT]);
-								avgDiscount += Double.parseDouble(tokenizedBuffer[F_DISCOUNT]);
-								avgStartGuess += Double.parseDouble(tokenizedBuffer[F_START_GUESS]);
-								avgAccuracy += Double.parseDouble(tokenizedBuffer[F_ACCURACY]);
-								avgAdvUtility += Double.parseDouble(tokenizedBuffer[F_ADV_UTILITY]);
-								avgSelUtility += Double.parseDouble(tokenizedBuffer[F_SEL_UTILITY]);
+								
+								numRoundsList.add(Double.parseDouble(tokenizedBuffer[F_NUM_ROUNDS]));
+								thresholdList.add(Double.parseDouble(tokenizedBuffer[F_THRESHOLD]));
+								numFeatList.add(Double.parseDouble(tokenizedBuffer[F_NUM_FEAT]));
+								discountList.add(Double.parseDouble(tokenizedBuffer[F_DISCOUNT]));
+								startGuessList.add(Double.parseDouble(tokenizedBuffer[F_START_GUESS]));
+								accuracyList.add(Double.parseDouble(tokenizedBuffer[F_ACCURACY]));
+								advUtilityList.add(Double.parseDouble(tokenizedBuffer[F_ADV_UTILITY]));
+								selUtilityList.add(Double.parseDouble(tokenizedBuffer[F_SEL_UTILITY]));
+								
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -151,24 +195,45 @@ public class CompareSellersIndividually {
 					}	
 					
 					//compute average
-					avgNumRounds /= NUM_RUNS;
-					avgThreshold /= NUM_RUNS;
-					avgNumfeat /= NUM_RUNS;
-					avgDiscount /= NUM_RUNS;
-					avgStartGuess /= NUM_RUNS;
-					avgAccuracy /= NUM_RUNS;
-					avgAdvUtility /= NUM_RUNS;
-					avgSelUtility /= NUM_RUNS;
+					statNumRounds = getMean(numRoundsList);
+					statThreshold = getMean(thresholdList);
+					statNumfeat = getMean(numFeatList);
+					statDiscount = getMean(discountList);
+					statStartGuess = getMean(startGuessList);
+					statAccuracy = getMean(accuracyList);
+					statAdvUtility = getMean(advUtilityList);
+					statSelUtility = getMean(selUtilityList);
 					
 					myWriter.toBuffer(
-							avgNumRounds + ", " +
-							avgThreshold + ", " + 
-							avgNumfeat + ", " + 
-							avgDiscount + ", " + 
-							avgStartGuess + ", " + 
-							avgAccuracy + ", " + 
-							avgAdvUtility + ", " + 
-							avgSelUtility + "\r\n");
+							statNumRounds + ", " +
+							statThreshold + ", " + 
+							statNumfeat + ", " + 
+							statDiscount + ", " + 
+							statStartGuess + ", " + 
+							statAccuracy + ", " + 
+							statAdvUtility + ", " + 
+							statSelUtility + "\r\n");
+					myWriter.write();
+
+					//compute standard deviation
+					statNumRounds = getStdDev(numRoundsList);
+					statThreshold = getStdDev(thresholdList);
+					statNumfeat = getStdDev(numFeatList);
+					statDiscount = getStdDev(discountList);
+					statStartGuess = getStdDev(startGuessList);
+					statAccuracy = getStdDev(accuracyList);
+					statAdvUtility = getStdDev(advUtilityList);
+					statSelUtility = getStdDev(selUtilityList);
+					
+					myWriter.toBuffer(
+							statNumRounds + ", " +
+							statThreshold + ", " + 
+							statNumfeat + ", " + 
+							statDiscount + ", " + 
+							statStartGuess + ", " + 
+							statAccuracy + ", " + 
+							statAdvUtility + ", " + 
+							statSelUtility + "\r\n");
 					myWriter.write();
 				}				
 		} catch (FileNotFoundException e1) {
