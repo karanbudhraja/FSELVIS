@@ -27,8 +27,8 @@ public class MultithreadExperiment implements Runnable {
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 8;
-	private static int		NUM_LEARN_SELLERS 		= 8; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
+	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 8; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
