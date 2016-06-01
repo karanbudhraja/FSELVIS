@@ -1,0 +1,37 @@
+import numpy
+import matplotlib.pyplot as plt
+
+xValues = [x/10.0 for x in range(11)]
+
+means = []
+for i in range(0,11,1):
+    fileName = "outFolder/1learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
+    binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
+    binarySearchData = numpy.flipud(binarySearchData)
+    utilityData = binarySearchData[:,-2]
+    means.append(numpy.mean(utilityData))
+a00, = plt.plot(xValues, means, "b--")
+
+means = []
+for i in range(0,11,1):
+    fileName = "outFolder/1learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
+    binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
+    binarySearchData = numpy.flipud(binarySearchData)
+    utilityData = binarySearchData[:,-2]
+    means.append(numpy.mean(utilityData))
+a10, = plt.plot(xValues, means, "b-")
+
+means = []
+for i in range(0,11,1):
+    fileName = "outFolder/1learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
+    binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
+    binarySearchData = numpy.flipud(binarySearchData)
+    utilityData = binarySearchData[:,-2]
+    means.append(numpy.mean(utilityData))
+a10ks8, = plt.plot(xValues, means, "b-s")
+
+plt.legend([a00, a10, a10ks8], ["alpha=0.0", "alpha=1.0", "alpha=1.0,Ks=8"], loc="best")
+plt.ylabel('Seller Utility')
+plt.xlabel('Game Number')
+plt.show()
+
