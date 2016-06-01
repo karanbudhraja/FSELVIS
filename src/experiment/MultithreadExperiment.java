@@ -78,20 +78,36 @@ public class MultithreadExperiment implements Runnable {
 
 	private static int runNumber; //used to allocate experiments to threads on a First-come-first-served basis
 	private static AbsUtF utilityFunction; //single global utility function
-	
+
 	public static void main(String[] args) {
+		// generate different graphs
+		ALPHA_S = 0.0;
+		K_S = 4;
+		_main(args, 1);
+
+		ALPHA_S = 1.0;
+		K_S = 4;
+		_main(args, 2);
+
+		ALPHA_S = 1.0;
+		K_S = 8;
+		_main(args, 3);
+	}
+	
+	private static void _main(String[] args, int testID) {
 		
 		for(int k = 0; k <= 10; k++){
-			ALPHA_S = 1.0;
 			WITNESS_SCORE_THRESHOLD = k/10.0;
-			OUT_PATH = "./outFolder/learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
-			_main(args);			
+			OUT_PATH = "./outFolder/" + Integer.toString(testID) + "_" + "learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
+			__main(args);	
 		}
 	}
 	
-	private static void _main(String[] args) {
+	private static void __main(String[] args) {
 		//make utility function
-		Constant discountFunction = new Constant(DISCOUNT);
+		//Constant discountFunction = new Constant(DISCOUNT);
+		Linear discountFunction = new Linear(-0.005, 1);
+		
 		if(!IS_NAIVE_UTIL_FUNC) {
 			utilityFunction = new NDimen(discountFunction, IS_MULTIPLES, IN_PATH, 1);
 		}
