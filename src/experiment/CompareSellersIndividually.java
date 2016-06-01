@@ -236,8 +236,8 @@ public class CompareSellersIndividually {
 		double selSum = 0;
 		
 		//make utility function
-		Constant discountFunction = new Constant(discount);
-		//Linear discountFunction = new Linear(-0.05, 1);
+		//Constant discountFunction = new Constant(discount);
+		Linear discountFunction = new Linear(-0.005, 1);
 		
 		AbsUtF utilityFunction;
 		if(!IS_NAIVE_UTIL_FUNC) {
@@ -444,7 +444,7 @@ public class CompareSellersIndividually {
 			}
 
 			//output total utility 
-			AbsAdv adversary = (adversaryList.get(0)).get(0);
+			AbsAdv adversary = (adversaryList.get(1)).get(0);
 			//System.out.println("\n" + adversary.getUtility() + " " + adversary.evaluateUtility() + " " + adversary.getCost());			
 			//System.out.println("Adversary: utility=" + (adversary.getUtility()/* + adversary.evaluateUtility() - adversary.getCost()*/));
 			//System.out.println("Selector:  utility=" + (selector.getUtility() + selector.evaluateUtility() - selector.getCost()));
