@@ -5,7 +5,7 @@ xValues = [x/10.0 for x in range(11)]
 
 means = []
 for i in range(0,11,1):
-    fileName = "outFolder/1learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
+    fileName = "outFolder/1_learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
     binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
     binarySearchData = numpy.flipud(binarySearchData)
     utilityData = binarySearchData[:,-2]
@@ -14,7 +14,7 @@ a00, = plt.plot(xValues, means, "b--")
 
 means = []
 for i in range(0,11,1):
-    fileName = "outFolder/1learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
+    fileName = "outFolder/2_learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
     binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
     binarySearchData = numpy.flipud(binarySearchData)
     utilityData = binarySearchData[:,-2]
@@ -23,7 +23,7 @@ a10, = plt.plot(xValues, means, "b-")
 
 means = []
 for i in range(0,11,1):
-    fileName = "outFolder/1learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
+    fileName = "outFolder/3_learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
     binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
     binarySearchData = numpy.flipud(binarySearchData)
     utilityData = binarySearchData[:,-2]
