@@ -30,8 +30,8 @@ for i in range(0,11,1):
     means.append(numpy.mean(utilityData))
 a10ks8, = plt.plot(xValues, means, "b-s")
 
-plt.legend([a00, a10, a10ks8], ["alpha=0.0", "alpha=1.0", "alpha=1.0,Ks=8"], loc="best")
+plt.legend([a00, a10, a10ks8], ["alpha=0.0,Ks=4", "alpha=1.0,Ks=4", "alpha=1.0,Ks=8"], loc="best")
 plt.ylabel('Seller Utility')
-plt.xlabel('Game Number')
+plt.xlabel('Witness Score Threshold')
 plt.show()
 
