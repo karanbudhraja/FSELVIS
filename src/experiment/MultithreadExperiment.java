@@ -351,7 +351,7 @@ public class MultithreadExperiment implements Runnable {
 							double witnessScore;
 
 							if(knownSet.size() == 0){
-								witnessScore = Double.POSITIVE_INFINITY;
+								witnessScore = sigmoid(Double.POSITIVE_INFINITY);
 							}
 							else{
 								witnessScore = sigmoid(unknownSet.size()/knownSet.size());
