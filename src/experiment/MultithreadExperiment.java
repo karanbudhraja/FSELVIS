@@ -444,8 +444,8 @@ public class MultithreadExperiment implements Runnable {
 				//selSum = selector.getUtility() - selector.getCost();
 				
 				advSum = 0;
-				int maxFace = 1;
-				//maxFace = NUM_BUYERS;
+				//int maxFace = 1;
+				int maxFace = NUM_BUYERS;
 
 				for(int face=0; face<maxFace; face++){
 					AbsAdv adversary = (adversaryList.get(0)).get(face);
