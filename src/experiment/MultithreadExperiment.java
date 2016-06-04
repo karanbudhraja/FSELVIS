@@ -65,6 +65,13 @@ public class MultithreadExperiment implements Runnable {
 	private static int		F_ADV_UTILITY	= 6;
 	private static int		F_SEL_UTILITY	= 7;
 	
+	//to avoid file i/o
+	//NUM_RUNS x 8 types of values x NUM_GAMES values
+	//java assigns all values as 0.0 yay
+	//total of all games, later converted to average
+	//keep adding what we get after each game, divide by games at end
+	static double[][] runsData = new double[NUM_RUNS][8];
+	
 	private static double sigmoid(double x)
 	{
 	    return 1 / (1 + Math.exp(-x));
@@ -99,7 +106,7 @@ public class MultithreadExperiment implements Runnable {
 		for(int k = 0; k <= 10; k++){
 			WITNESS_SCORE_THRESHOLD = k/10.0;
 			OUT_PATH = "./outFolder/" + Integer.toString(testID) + "_" + "learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
-			__main(args);	
+			__main(args);
 		}
 	}
 	
@@ -140,82 +147,58 @@ public class MultithreadExperiment implements Runnable {
 		mainWriter.toBuffer("numRounds, threshold, numFeat, DISCOUNT, startGuess, accuracy, advUtility, selUtility\r\n");
 		mainWriter.write();
 
-		//open files to compute average
-		BufferedReader[] myBufferReader = new BufferedReader[NUM_RUNS];
-		String[] fileBuffer = new String[NUM_RUNS];
+		//convert game-wise totals to averages
+		for(int e = 0; e < NUM_RUNS; e++) {
+			runsData[e][F_NUM_ROUNDS] /= NUM_GAMES;
+			runsData[e][F_THRESHOLD] /= NUM_GAMES;
+			runsData[e][F_NUM_FEAT] /= NUM_GAMES;
+			runsData[e][F_DISCOUNT] /= NUM_GAMES;
+			runsData[e][F_START_GUESS] /= NUM_GAMES;
+			runsData[e][F_ACCURACY] /= NUM_GAMES;
+			runsData[e][F_ADV_UTILITY] /= NUM_GAMES;
+			runsData[e][F_SEL_UTILITY] /= NUM_GAMES;						               
+		}
 
-		try {
-			for(int e = 0; e < NUM_RUNS; e++) {
-				//open buffer
-				myBufferReader[e] = new BufferedReader(new FileReader(OUT_PATH + "_" + (e+1) + ".txt"));
-			}
+		double avgNumRounds = 0;
+		double avgThreshold = 0;
+		double avgNumfeat = 0;
+		double avgDiscount = 0;
+		double avgStartGuess = 0;
+		double avgAccuracy = 0;
+		double avgAdvUtility = 0;
+		double avgSelUtility = 0;
 
-			while (true) {
-				//read one line
-				int avgNumRounds = 0;
-				double avgThreshold = 0;
-				int avgNumfeat = 0;
-				double avgDiscount = 0;
-				double avgStartGuess = 0;
-				double avgAccuracy = 0;
-				double avgAdvUtility = 0;
-				double avgSelUtility = 0;
+		for(int e = 0; e < NUM_RUNS; e++) {
+			avgNumRounds += runsData[e][F_NUM_ROUNDS];
+			avgThreshold += runsData[e][F_THRESHOLD];
+			avgNumfeat += runsData[e][F_NUM_FEAT];
+			avgDiscount += runsData[e][F_DISCOUNT];
+			avgStartGuess += runsData[e][F_START_GUESS];
+			avgAccuracy += runsData[e][F_ACCURACY];
+			avgAdvUtility += runsData[e][F_ADV_UTILITY];
+			avgSelUtility += runsData[e][F_SEL_UTILITY];
+		}
 
-				for(int e = 0; e < NUM_RUNS; e++) {
-					try {								
-						//check end of file
-						fileBuffer[e] = myBufferReader[e].readLine();
-						if(fileBuffer[e] == null){
-							//delete all individual files
-							for(int f = 0; f < NUM_RUNS; f++) {
-								File file = new File(OUT_PATH + "_" + (f+1) + ".txt");
-								file.delete();
-							}
+		//compute average
+		avgNumRounds /= NUM_RUNS;
+		avgThreshold /= NUM_RUNS;
+		avgNumfeat /= NUM_RUNS;
+		avgDiscount /= NUM_RUNS;
+		avgStartGuess /= NUM_RUNS;
+		avgAccuracy /= NUM_RUNS;
+		avgAdvUtility /= NUM_RUNS;
+		avgSelUtility /= NUM_RUNS;
 
-							//end of averaging
-							System.out.println("Done processing.");
-							return;
-						}
-
-						String[] tokenizedBuffer = fileBuffer[e].split(", ");
-
-						avgNumRounds += Integer.parseInt(tokenizedBuffer[F_NUM_ROUNDS]);
-						avgThreshold += Double.parseDouble(tokenizedBuffer[F_THRESHOLD]);
-						avgNumfeat += Integer.parseInt(tokenizedBuffer[F_NUM_FEAT]);
-						avgDiscount += Double.parseDouble(tokenizedBuffer[F_DISCOUNT]);
-						avgStartGuess += Double.parseDouble(tokenizedBuffer[F_START_GUESS]);
-						avgAccuracy += Double.parseDouble(tokenizedBuffer[F_ACCURACY]);
-						avgAdvUtility += Double.parseDouble(tokenizedBuffer[F_ADV_UTILITY]);
-						avgSelUtility += Double.parseDouble(tokenizedBuffer[F_SEL_UTILITY]);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
-
-				//compute average
-				avgNumRounds /= NUM_RUNS;
-				avgThreshold /= NUM_RUNS;
-				avgNumfeat /= NUM_RUNS;
-				avgDiscount /= NUM_RUNS;
-				avgStartGuess /= NUM_RUNS;
-				avgAccuracy /= NUM_RUNS;
-				avgAdvUtility /= NUM_RUNS;
-				avgSelUtility /= NUM_RUNS;
-
-				mainWriter.toBuffer(
-						avgNumRounds + ", " +
-								avgThreshold + ", " + 
-								avgNumfeat + ", " + 
-								avgDiscount + ", " + 
-								avgStartGuess + ", " + 
-								avgAccuracy + ", " + 
-								avgAdvUtility + ", " + 
-								avgSelUtility + "\r\n");
-				mainWriter.write();
-			}				
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}	
+		mainWriter.toBuffer(
+				avgNumRounds + ", " +
+						avgThreshold + ", " + 
+						avgNumfeat + ", " + 
+						avgDiscount + ", " + 
+						avgStartGuess + ", " + 
+						avgAccuracy + ", " + 
+						avgAdvUtility + ", " + 
+						avgSelUtility + "\r\n");
+		mainWriter.write();		
 	}
 
 	public static synchronized int getNextExperimentNum() {
@@ -227,9 +210,6 @@ public class MultithreadExperiment implements Runnable {
 		while(e <= NUM_RUNS) {
 			System.out.println(Thread.currentThread().getName() + 
 					" is running experiment #" + (e));
-
-			//set up file writing
-			Writer myWriter = new Writer(OUT_PATH + "_" + (e) + ".txt", IS_OVERWRITE);
 
 			double advSum = 0;
 			double selSum = 0;
@@ -451,18 +431,17 @@ public class MultithreadExperiment implements Runnable {
 					AbsAdv adversary = (adversaryList.get(0)).get(face);
 					advSum += adversary.getUtility();						
 				}
-								
-				myWriter.toBuffer(
-						NUM_ROUNDS + ", " +
-								THRESHOLD + ", " + 
-								NUM_FEAT + ", " + 
-								DISCOUNT + ", " + 
-								START_GUESS + ", " + 
-								ACCURACY + ", " + 
-								advSum + ", " + 
-								selSum + "\r\n");
+
+				runsData[e][F_NUM_ROUNDS] += NUM_ROUNDS;
+				runsData[e][F_THRESHOLD] += THRESHOLD;
+				runsData[e][F_NUM_FEAT] += NUM_FEAT;
+				runsData[e][F_DISCOUNT] += DISCOUNT;
+				runsData[e][F_START_GUESS] += START_GUESS;
+				runsData[e][F_ACCURACY] += ACCURACY;
+				runsData[e][F_ADV_UTILITY] += advSum;
+				runsData[e][F_SEL_UTILITY] += selSum;						               
 			}
-			myWriter.write();
+
 			e = getNextExperimentNum();//get next experiment number
 		}
 	}
