@@ -1,10 +1,5 @@
 package experiment;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -86,6 +81,8 @@ public class MultithreadExperiment implements Runnable {
 	private static int runNumber; //used to allocate experiments to threads on a First-come-first-served basis
 	private static AbsUtF utilityFunction; //single global utility function
 
+	private static double[] avgData = new double[8];
+	
 	public static void main(String[] args) {
 		// generate different graphs
 		ALPHA_S = 0.0;
@@ -147,38 +144,16 @@ public class MultithreadExperiment implements Runnable {
 		mainWriter.toBuffer("numRounds, threshold, numFeat, DISCOUNT, startGuess, accuracy, advUtility, selUtility\r\n");
 		mainWriter.write();
 
-		//convert game-wise totals to averages
-		for(int e = 0; e < NUM_RUNS; e++) {
-			runsData[e][F_NUM_ROUNDS] /= NUM_GAMES;
-			runsData[e][F_THRESHOLD] /= NUM_GAMES;
-			runsData[e][F_NUM_FEAT] /= NUM_GAMES;
-			runsData[e][F_DISCOUNT] /= NUM_GAMES;
-			runsData[e][F_START_GUESS] /= NUM_GAMES;
-			runsData[e][F_ACCURACY] /= NUM_GAMES;
-			runsData[e][F_ADV_UTILITY] /= NUM_GAMES;
-			runsData[e][F_SEL_UTILITY] /= NUM_GAMES;						               
-		}
-
-		double avgNumRounds = 0;
-		double avgThreshold = 0;
-		double avgNumfeat = 0;
-		double avgDiscount = 0;
-		double avgStartGuess = 0;
-		double avgAccuracy = 0;
-		double avgAdvUtility = 0;
-		double avgSelUtility = 0;
-
-		for(int e = 0; e < NUM_RUNS; e++) {
-			avgNumRounds += runsData[e][F_NUM_ROUNDS];
-			avgThreshold += runsData[e][F_THRESHOLD];
-			avgNumfeat += runsData[e][F_NUM_FEAT];
-			avgDiscount += runsData[e][F_DISCOUNT];
-			avgStartGuess += runsData[e][F_START_GUESS];
-			avgAccuracy += runsData[e][F_ACCURACY];
-			avgAdvUtility += runsData[e][F_ADV_UTILITY];
-			avgSelUtility += runsData[e][F_SEL_UTILITY];
-		}
-
+		//get totals
+		double avgNumRounds = avgData[F_NUM_ROUNDS];
+		double avgThreshold = avgData[F_THRESHOLD];
+		double avgNumfeat = avgData[F_NUM_FEAT];
+		double avgDiscount = avgData[F_DISCOUNT];
+		double avgStartGuess = avgData[F_START_GUESS];
+		double avgAccuracy = avgData[F_ACCURACY];
+		double avgAdvUtility = avgData[F_ADV_UTILITY];
+		double avgSelUtility = avgData[F_SEL_UTILITY];
+		
 		//compute average
 		avgNumRounds /= NUM_RUNS;
 		avgThreshold /= NUM_RUNS;
@@ -201,12 +176,17 @@ public class MultithreadExperiment implements Runnable {
 		mainWriter.write();		
 	}
 
+	public static synchronized void addDataAtIndex(int index, double value) {
+		avgData[index] += value;
+	}
+	
 	public static synchronized int getNextExperimentNum() {
 		return ++runNumber;
 	}
 
 	public void run() {
 		int e = getNextExperimentNum();
+
 		while(e <= NUM_RUNS) {
 			System.out.println(Thread.currentThread().getName() + 
 					" is running experiment #" + (e));
@@ -229,6 +209,8 @@ public class MultithreadExperiment implements Runnable {
 				}
 				adversaryList.add(lwbsAdversary);
 			}
+
+			double[] gameData = new double[8];
 
 			for(int j = 0; j < NUM_GAMES; j++) {
 
@@ -432,16 +414,35 @@ public class MultithreadExperiment implements Runnable {
 					advSum += adversary.getUtility();						
 				}
 
-				runsData[e][F_NUM_ROUNDS] += NUM_ROUNDS;
-				runsData[e][F_THRESHOLD] += THRESHOLD;
-				runsData[e][F_NUM_FEAT] += NUM_FEAT;
-				runsData[e][F_DISCOUNT] += DISCOUNT;
-				runsData[e][F_START_GUESS] += START_GUESS;
-				runsData[e][F_ACCURACY] += ACCURACY;
-				runsData[e][F_ADV_UTILITY] += advSum;
-				runsData[e][F_SEL_UTILITY] += selSum;						               
+				gameData[F_NUM_ROUNDS] += NUM_ROUNDS;
+				gameData[F_THRESHOLD] += THRESHOLD;
+				gameData[F_NUM_FEAT] += NUM_FEAT;
+				gameData[F_DISCOUNT] += DISCOUNT;
+				gameData[F_START_GUESS] += START_GUESS;
+				gameData[F_ACCURACY] += ACCURACY;
+				gameData[F_ADV_UTILITY] += advSum;
+				gameData[F_SEL_UTILITY] += selSum;						               
 			}
 
+			gameData[F_NUM_ROUNDS] /= NUM_GAMES;
+			gameData[F_THRESHOLD] /= NUM_GAMES;
+			gameData[F_NUM_FEAT] /= NUM_GAMES;
+			gameData[F_DISCOUNT] /= NUM_GAMES;
+			gameData[F_START_GUESS] /= NUM_GAMES;
+			gameData[F_ACCURACY] /= NUM_GAMES;
+			gameData[F_ADV_UTILITY] /= NUM_GAMES;
+			gameData[F_SEL_UTILITY] /= NUM_GAMES;						               
+
+			//add to totals
+			addDataAtIndex(F_NUM_ROUNDS, gameData[F_NUM_ROUNDS]);
+			addDataAtIndex(F_THRESHOLD, gameData[F_THRESHOLD]);
+			addDataAtIndex(F_NUM_FEAT, gameData[F_NUM_FEAT]);
+			addDataAtIndex(F_DISCOUNT, gameData[F_DISCOUNT]);
+			addDataAtIndex(F_START_GUESS, gameData[F_START_GUESS]);
+			addDataAtIndex(F_ACCURACY, gameData[F_ACCURACY]);
+			addDataAtIndex(F_ADV_UTILITY, gameData[F_ADV_UTILITY]);
+			addDataAtIndex(F_SEL_UTILITY, gameData[F_SEL_UTILITY]);
+			
 			e = getNextExperimentNum();//get next experiment number
 		}
 	}
