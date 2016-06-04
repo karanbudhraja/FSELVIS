@@ -7,28 +7,37 @@ means = []
 for i in range(0,11,1):
     fileName = "outFolder/1_learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
     binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
-    binarySearchData = numpy.flipud(binarySearchData)
-    utilityData = binarySearchData[:,-2]
+    utilityData = binarySearchData[-2]
     means.append(numpy.mean(utilityData))
-a00, = plt.plot(xValues, means, "b--")
+means_ = [means[0]]*len(means)
+for index in range(1,len(means)):
+    means_[index] = means[index]-means[index-1]
+a00, = plt.plot(xValues, means_, "b--")
+last = means[-1]
 
 means = []
 for i in range(0,11,1):
     fileName = "outFolder/2_learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
     binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
-    binarySearchData = numpy.flipud(binarySearchData)
-    utilityData = binarySearchData[:,-2]
+    utilityData = binarySearchData[-2]
     means.append(numpy.mean(utilityData))
-a10, = plt.plot(xValues, means, "b-")
+print(means)
+means_ = [means[0]-last]*len(means)
+for index in range(1,len(means)):
+    means_[index] = means[index]-means[index-1]
+a10, = plt.plot(xValues, means_, "b-")
+last = means[-1]
 
 means = []
 for i in range(0,11,1):
     fileName = "outFolder/3_learningTest" + "_" + str(float(i)/10).replace(".", "") + ".txt"
     binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
-    binarySearchData = numpy.flipud(binarySearchData)
-    utilityData = binarySearchData[:,-2]
+    utilityData = binarySearchData[-2]
     means.append(numpy.mean(utilityData))
-a10ks8, = plt.plot(xValues, means, "b-s")
+means_ = [means[0]-last]*len(means)
+for index in range(1,len(means)):
+    means_[index] = means[index]-means[index-1]
+a10ks8, = plt.plot(xValues, means_, "b-s")
 
 plt.legend([a00, a10, a10ks8], ["alpha=0.0,Ks=4", "alpha=1.0,Ks=4", "alpha=1.0,Ks=8"], loc="best")
 plt.ylabel('Seller Utility')
