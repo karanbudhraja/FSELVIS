@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction;
-
 import utilityFunc.*;
 import utilityFunc.discountFunc.*;
 import agent.adversary.*;
@@ -24,8 +22,8 @@ public class MultithreadExperiment implements Runnable {
 	//experiment settings
 	private static int		NUM_RUNS				= 1000; 
 	private static int		NUM_BUYERS				= 8;
-	private static int		NUM_LEARN_SELLERS 		= 0; //LearningWithBinarySearch
-	private static int		NUM_BASIC_SELLERS 		= 8; //BinarySearch (NOT learning)
+	private static int		NUM_LEARN_SELLERS 		= 8; //LearningWithBinarySearch
+	private static int		NUM_BASIC_SELLERS 		= 0; //BinarySearch (NOT learning)
 	private static boolean	IS_ONE_SALE_PER_ROUND 	= true;
 	private static boolean	IS_NAIVE_UTIL_FUNC		= true;
 	private static boolean	IS_MULTIPLES			= false;
@@ -324,8 +322,8 @@ public class MultithreadExperiment implements Runnable {
 							unknownSet.removeAll(witnessKnownSet);
 							double witnessScore;
 
-							if(knownSet.size() == 0){
-								witnessScore = sigmoid(Double.POSITIVE_INFINITY);
+							if(witnessKnownSet.size() == 0){
+								witnessScore = 1;
 							}
 							else{
 								witnessScore = sigmoid(unknownSet.size()/(double)witnessKnownSet.size());
