@@ -1,2 +1,3 @@
-compareAdversaryUtility.py
-*.py
+.classpath
+*.class
+*.txt

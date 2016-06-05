@@ -110,13 +110,13 @@ public class MultithreadExperiment implements Runnable {
 	
 	private static void _main(String[] args, int testID) {
 		
-		for(int k = 0; k <= 10; k++){
+		for(int k = 0; k <= 20; k++){
 			//reset values
 			for(int i = 0; i < 8; i++){
 				resetDataAtIndex(i);
 			}
 			
-			WITNESS_SCORE_THRESHOLD = k/10.0;
+			WITNESS_SCORE_THRESHOLD = k/20.0;
 			OUT_PATH = "./outFolder/" + Integer.toString(testID) + "_" + "learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
 			__main(args);
 		}
@@ -319,15 +319,16 @@ public class MultithreadExperiment implements Runnable {
 							}
 
 							//compute score for this witness
-							witnessKnownSet.removeAll(knownSet);
-							Set<Integer> unknownSet = witnessKnownSet;
+							Set<Integer> unknownSet = new HashSet<Integer>();
+							unknownSet.addAll(knownSet);
+							unknownSet.removeAll(witnessKnownSet);
 							double witnessScore;
 
 							if(knownSet.size() == 0){
 								witnessScore = sigmoid(Double.POSITIVE_INFINITY);
 							}
 							else{
-								witnessScore = sigmoid(unknownSet.size()/knownSet.size());
+								witnessScore = sigmoid(unknownSet.size()/(double)witnessKnownSet.size());
 							}
 
 							//participate if score above threshold
