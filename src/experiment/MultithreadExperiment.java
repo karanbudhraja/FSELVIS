@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction;
+
 import utilityFunc.*;
 import utilityFunc.discountFunc.*;
 import agent.adversary.*;
@@ -82,7 +84,15 @@ public class MultithreadExperiment implements Runnable {
 	private static AbsUtF utilityFunction; //single global utility function
 
 	private static double[] avgData = new double[8];
-	
+
+	public static synchronized void resetDataAtIndex(int index) {
+		avgData[index] = 0;
+	}
+
+	public static synchronized void addDataAtIndex(int index, double value) {
+		avgData[index] += value;
+	}
+
 	public static void main(String[] args) {
 		// generate different graphs
 		ALPHA_S = 0.0;
@@ -101,6 +111,11 @@ public class MultithreadExperiment implements Runnable {
 	private static void _main(String[] args, int testID) {
 		
 		for(int k = 0; k <= 10; k++){
+			//reset values
+			for(int i = 0; i < 8; i++){
+				resetDataAtIndex(i);
+			}
+			
 			WITNESS_SCORE_THRESHOLD = k/10.0;
 			OUT_PATH = "./outFolder/" + Integer.toString(testID) + "_" + "learningTest" + "_" + Double.toString(WITNESS_SCORE_THRESHOLD).replace(".", "");
 			__main(args);
@@ -174,10 +189,6 @@ public class MultithreadExperiment implements Runnable {
 						avgAdvUtility + ", " + 
 						avgSelUtility + "\r\n");
 		mainWriter.write();		
-	}
-
-	public static synchronized void addDataAtIndex(int index, double value) {
-		avgData[index] += value;
 	}
 	
 	public static synchronized int getNextExperimentNum() {

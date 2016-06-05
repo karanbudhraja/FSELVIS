@@ -9,10 +9,7 @@ for i in range(0,11,1):
     binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
     utilityData = binarySearchData[-2]
     means.append(numpy.mean(utilityData))
-means_ = [means[0]]*len(means)
-for index in range(1,len(means)):
-    means_[index] = means[index]-means[index-1]
-a00, = plt.plot(xValues, means_, "b--")
+a00, = plt.plot(xValues, means, "b--")
 last = means[-1]
 
 means = []
@@ -21,11 +18,7 @@ for i in range(0,11,1):
     binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
     utilityData = binarySearchData[-2]
     means.append(numpy.mean(utilityData))
-print(means)
-means_ = [means[0]-last]*len(means)
-for index in range(1,len(means)):
-    means_[index] = means[index]-means[index-1]
-a10, = plt.plot(xValues, means_, "b-")
+a10, = plt.plot(xValues, means, "b-")
 last = means[-1]
 
 means = []
@@ -34,10 +27,7 @@ for i in range(0,11,1):
     binarySearchData = numpy.loadtxt(fileName, delimiter=",", skiprows=1)
     utilityData = binarySearchData[-2]
     means.append(numpy.mean(utilityData))
-means_ = [means[0]-last]*len(means)
-for index in range(1,len(means)):
-    means_[index] = means[index]-means[index-1]
-a10ks8, = plt.plot(xValues, means_, "b-s")
+a10ks8, = plt.plot(xValues, means, "b-s")
 
 plt.legend([a00, a10, a10ks8], ["alpha=0.0,Ks=4", "alpha=1.0,Ks=4", "alpha=1.0,Ks=8"], loc="best")
 plt.ylabel('Seller Utility')
