@@ -458,7 +458,7 @@ public class TrackInformationSharing implements Runnable {
 			System.out.println("-----printing matrix-----");
 			for(int ii = 1; ii < NUM_LEARN_SELLERS+NUM_BASIC_SELLERS; ii++){
 				for(int jj = 1; jj < NUM_LEARN_SELLERS+NUM_BASIC_SELLERS; jj++){
-					System.out.print(witnessParticipationData[ii][jj]/NUM_GAMES);
+					System.out.print(witnessParticipationData[ii][jj]/(double)NUM_GAMES);
 					System.out.print(" ");
 				}
 				System.out.println();
