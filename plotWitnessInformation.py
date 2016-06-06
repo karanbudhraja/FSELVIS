@@ -13,11 +13,19 @@ for i in range(0,21,1):
         # plot surface
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
+        axes = plt.gca()
+        axes.set_xlim([1, 8])
+        axes.set_ylim([1, 8])
+
         X = numpy.arange(1,sellerCount+1)
         Y = numpy.arange(1,sellerCount+1)
         X, Y = numpy.meshgrid(X, Y)
         Z = witnessParticipationData
-        surf = ax.scatter(X, Y, Z, cmap=cm.coolwarm)
-        plt.show()
-
-
+        #plot = ax.scatter(X, Y, Z, cmap=cm.coolwarm)
+        plot = ax.plot_wireframe(X, Y, Z, color="black")
+        plot = ax.contourf(X, Y, Z, cmap=cm.coolwarm)
+        ax.set_xlabel('Requester Number')
+        ax.set_ylabel('Witness Number')
+        ax.set_zlabel('Participation Count')
+        plt.savefig(fileName + ".png")
+        plt.close(fig)
