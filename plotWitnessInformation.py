@@ -27,5 +27,6 @@ for i in range(0,21,1):
         ax.set_xlabel('Requester Number')
         ax.set_ylabel('Witness Number')
         ax.set_zlabel('Participation Count')
+        fig.colorbar(plot, shrink=0.5, aspect=5)
         plt.savefig(fileName + ".png")
         plt.close(fig)
