@@ -16,7 +16,7 @@ for i in range(0,21,1):
         axes = plt.gca()
         axes.set_xlim([1, 8])
         axes.set_ylim([1, 8])
-        ax.view_init(elev=90, azim=0)
+        ax.view_init(elev=90, azim=90)
         X = numpy.arange(1,sellerCount+1)
         Y = numpy.arange(1,sellerCount+1)
         X, Y = numpy.meshgrid(X, Y)
