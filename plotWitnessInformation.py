@@ -16,7 +16,7 @@ for i in range(0,21,1):
         axes = plt.gca()
         axes.set_xlim([1, 8])
         axes.set_ylim([1, 8])
-
+        ax.view_init(elev=90, azim=0)
         X = numpy.arange(1,sellerCount+1)
         Y = numpy.arange(1,sellerCount+1)
         X, Y = numpy.meshgrid(X, Y)
@@ -26,7 +26,11 @@ for i in range(0,21,1):
         plot = ax.contourf(X, Y, Z, cmap=cm.coolwarm)
         ax.set_xlabel('Requester Number')
         ax.set_ylabel('Witness Number')
-        ax.set_zlabel('Participation Count')
-        fig.colorbar(plot, shrink=0.5, aspect=5)
+        #ax.set_zlabel('Participation Count')
+        cbar = fig.colorbar(plot, shrink=0.5, aspect=5)
+        cbar.ax.set_ylabel('Participation Count')
+        # turn of z axis
+        ax.w_zaxis.line.set_lw(0.)
+        ax.set_zticks([])
         plt.savefig(fileName + ".png")
         plt.close(fig)
